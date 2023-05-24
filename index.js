@@ -90,8 +90,11 @@ class TekstowoAPI {
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
-		const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\n{2,}/g, '\n');;
-		const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\n{2,}/g, '\n');;
+		const fail = responseText.replace(/\n{2,}/g, '\n').split("<title>")[1].split("</title>")[0].includes("404");
+		if (fail)
+			return null;
+		const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\n{2,}/g, '\n');
+		const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\n{2,}/g, '\n');
 		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated);
 	}
 	/**
