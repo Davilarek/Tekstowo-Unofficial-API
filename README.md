@@ -1,5 +1,5 @@
 # Tekstowo Unofficial API
-Unofficial API for https://tekstowo.pl
+Unofficial API for https://tekstowo.pl<br>
 This API has been designed for both Node.JS and Browserside JS.
 
 ## Currently supported:
