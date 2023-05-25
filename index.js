@@ -55,6 +55,8 @@ class TekstowoAPI {
 	 * @param {TekstowoAPIProxyMethods} proxyMetod
 	 */
 	constructor(FetchImpl, proxyMetod = TekstowoAPIProxyMethods.AllOrigins) {
+		if (!(typeof FetchImpl === 'function'))
+			FetchImpl = fetch;
 		/**
 		 * @type {fetch}
 		 */
