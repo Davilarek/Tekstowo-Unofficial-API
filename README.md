@@ -16,8 +16,12 @@ Note: this project uses [pnpm](https://pnpm.io/) and you should use it too. <br>
 However, you don't need to use pnpm if you don't want to (instead of `pnpm install` etc use `npm install`).
 1. Download or clone the repo
 2. `cd` to the repo
-3. `pnpm install`
-4. If you want to use the browser version, run `pnpm run build`
+3. `index.js` is the main API file. You can require it in your project etc.
+### Browser only steps
+If you want to use the browser version, run:
+1. `pnpm install`
+2. `pnpm run build`
+3. Use `TekstowoAPI-browser.js` from `dist/` directory.
 
 ## Please use the API responsibly
 Please ensure that you use this API responsibly and for legitimate purposes only. Do not spam the Tekstowo server.
