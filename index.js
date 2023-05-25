@@ -68,7 +68,8 @@ class TekstowoAPI {
 	 * param {RequestInit} options.fetchOptions
 	 */
 	async makeRequest(options) {
-		return await this.FetchImpl(options.url, options.fetchOptions);
+		const localFetch = this.FetchImpl;
+		return await localFetch(options.url, options.fetchOptions);
 	}
 	/**
 	 * @param {string} url
