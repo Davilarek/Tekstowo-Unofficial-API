@@ -1,0 +1,15 @@
+{
+  "name": "TekstowoApi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build-browser"
+  },
+  "keywords": [],
+  "author": "Davilarek",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^17.0.0"
+  }
+}
