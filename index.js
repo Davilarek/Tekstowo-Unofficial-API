@@ -51,14 +51,9 @@ class TekstowoAPILyrics {
 
 class TekstowoAPI {
 	/**
-	 * @param {fetch} FetchImpl 
 	 * @param {TekstowoAPIProxyMethods} proxyMetod
 	 */
-	constructor(FetchImpl, proxyMetod = TekstowoAPIProxyMethods.AllOrigins) {
-		/**
-		 * @type {fetch}
-		 */
-		this.FetchImpl = FetchImpl;
+	constructor(proxyMetod = TekstowoAPIProxyMethods.AllOrigins) {
 		this.proxyMetod = proxyMetod;
 	}
 	/**
@@ -68,7 +63,7 @@ class TekstowoAPI {
 	 * param {RequestInit} options.fetchOptions
 	 */
 	async makeRequest(options) {
-		return await this.FetchImpl(options.url, options.fetchOptions);
+		return await fetch(options.url, options.fetchOptions);
 	}
 	/**
 	 * @param {string} url
