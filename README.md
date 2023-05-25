@@ -8,9 +8,6 @@ This API has been designed for both Node.JS and Browserside JS.
 ## Not planned:
 - Account management
 
-## Example usage
-In [test.js](./test.js)
-
 ## Installing
 Note: this project uses [pnpm](https://pnpm.io/) and you should use it too. <br>
 However, you don't need to use pnpm if you don't want to (instead of `pnpm install` etc use `npm install`).
@@ -23,6 +20,14 @@ If you want to use the browser version, run:
 2. `pnpm run build`
 3. Use `TekstowoAPI-browser.js` from `dist/` directory.
 4. Use `require("TekstowoAPI")`
+
+## Example usage
+In [test.js](./test.js)
+### Browser only example
+```js
+window.TekstowoAPI = new (require("TekstowoAPI"))(1); // 1 for allorigins proxy
+await TekstowoAPI.getLyrics("HammerFall", "Last Man Standing");
+```
 
 ## Please use the API responsibly
 Please ensure that you use this API responsibly and for legitimate purposes only. Do not spam the Tekstowo server.
