@@ -22,6 +22,7 @@ If you want to use the browser version, run:
 1. `pnpm install`
 2. `pnpm run build`
 3. Use `TekstowoAPI-browser.js` from `dist/` directory.
+4. Use `require("TekstowoAPI")`
 
 ## Please use the API responsibly
 Please ensure that you use this API responsibly and for legitimate purposes only. Do not spam the Tekstowo server.
