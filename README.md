@@ -23,6 +23,7 @@ If you want to use the browser version, run:
 
 ## Example usage
 In [test.js](./test.js)
+Or [API.md](./docs/API.md)
 ### Browser only example
 ```js
 window.TekstowoAPI = new (require("TekstowoAPI"))(1); // 1 for allorigins proxy
