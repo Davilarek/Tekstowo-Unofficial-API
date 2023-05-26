@@ -2,7 +2,7 @@
 >## [TekstowoAPI](#tekstowoapi-class) class
 - [`constructor`](#tekstowoapiconstructor)
 - (async) [`makeRequest`](#async-tekstowoapimakerequest)
-- [`proxyThisUrl`](#async-tekstowoapiproxythisurl)
+- [`proxyThisUrl`](#tekstowoapiproxythisurl)
 - (async) [`extractLyrics`](#async-tekstowoapiextractlyrics)
 - (async) [`searchLyrics`](#async-tekstowoapisearchlyrics)
 - (async) [`getPagesForSong`](#async-tekstowoapigetpagesforsong)
