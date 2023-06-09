@@ -1,16 +1,7 @@
 class TekstowoAPIRequestOptions {
 	/**
-	 * @type {string}
-	 */
-	url
-	/**
-	 * @type {RequestInit}
-	 */
-	fetchOptions
-
-	/**
-	 * @param {string} url 
-	 * @param {RequestInit} fetchOptions 
+	 * @param {string} url
+	 * @param {RequestInit} fetchOptions
 	 */
 	constructor(url, fetchOptions) {
 		this.url = url;
@@ -28,8 +19,14 @@ const TekstowoAPIProxyMethods = {
 	AllOrigins: 1,
 };
 
+// eslint-disable-next-line no-unused-vars
+class TekstowoAPILyricsID extends String { }
+
 const TekstowoAPIUrls = {
-	LYRICS: (id) => { return "https://www.tekstowo.pl/piosenka," + id + ".html" },
+	/**
+	 * @param {TekstowoAPILyricsID} id
+	 */
+	LYRICS: (id) => { return "https://www.tekstowo.pl/piosenka," + id + ".html"; },
 	SEARCH: (artist, title, page = 1) => {
 		let baseUrl = `https://www.tekstowo.pl/szukaj,`;
 		if (!artist)
@@ -42,12 +39,10 @@ const TekstowoAPIUrls = {
 		baseUrl += `tytul,` + title + ",";
 		baseUrl += "strona," + page;
 		return baseUrl + ".html";
-	}
+	},
 };
 
 class TekstowoAPILyrics {
-	original = ""
-	translated = ""
 	/**
 	 * @param {string} original
 	 * @param {string} translated
@@ -60,7 +55,7 @@ class TekstowoAPILyrics {
 
 class TekstowoAPI {
 	/**
-	 * @param {fetch} FetchImpl 
+	 * @param {fetch} FetchImpl
 	 * @param {TekstowoAPIProxyMethods} proxyMetod
 	 */
 	constructor(FetchImpl, proxyMetod = TekstowoAPIProxyMethods.AllOrigins) {
@@ -94,11 +89,11 @@ class TekstowoAPI {
 		}
 	}
 	/**
-	 * @param {string} songId
+	 * @param {TekstowoAPILyricsID} songId
 	 */
 	async extractLyrics(songId) {
 		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.LYRICS(songId)), { method: "GET" }
+			this.proxyThisUrl(TekstowoAPIUrls.LYRICS(songId)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
@@ -118,13 +113,16 @@ class TekstowoAPI {
 		// if (artist == "")
 		// 	artist = undefined;
 		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName, page)), { method: "GET" }
+			this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName, page)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
 		const base1 = responseText.split(`:</h2>`)[1].split(`<h2 class="`)[0];
 		const extractedIds = getTextBetween(base1, `<a href="/piosenka,`, `.html" class="`);
 		// const extractedNames = getTextBetween(base1, `<a href="/piosenka,`, `.html" class="`);
+		/**
+		 * @type {Object.<string, TekstowoAPILyricsID>}
+		 */
 		const base2 = {};
 		for (let i = 0; i < extractedIds.length; i++) {
 			const element = extractedIds[i];
@@ -139,7 +137,7 @@ class TekstowoAPI {
 	 */
 	async getPagesForSong(artist, songName) {
 		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName)), { method: "GET" }
+			this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text()).split("\n").join("");
@@ -157,9 +155,9 @@ class TekstowoAPI {
 	 */
 	async getLyrics(artist, songName) {
 		// compare strings
-		let results = await this.searchLyrics(artist, songName);
-		let resultsMod = Object.keys(results).filter(x => x.split(" - ")[1]);
-		let a = findClosestString(levenshteinDistanceArray(resultsMod, songName));
+		const results = await this.searchLyrics(artist, songName);
+		const resultsMod = Object.keys(results).filter(x => x.split(" - ")[1]);
+		const a = findClosestString(levenshteinDistanceArray(resultsMod, songName));
 		// return a.closestString;
 		// console.log(results);
 		// console.log(a.closestString);
@@ -168,7 +166,6 @@ class TekstowoAPI {
 }
 
 /**
- * 
  * @param {Array<{str: string; distance: number;}>} distances
  * @returns
  */
@@ -185,7 +182,7 @@ function findClosestString(distances) {
 
 	return {
 		closestString: closestString,
-		lowestDistance: lowestDistance
+		lowestDistance: lowestDistance,
 	};
 }
 
@@ -234,13 +231,14 @@ function levenshteinDistance(str1, str2) {
 		for (let j = 1; j <= n; j++) {
 			if (str1[i - 1] === str2[j - 1]) {
 				dp[i][j] = dp[i - 1][j - 1];
-			} else {
+			}
+			else {
 				dp[i][j] =
 					1 +
 					Math.min(
 						dp[i - 1][j],
 						dp[i][j - 1],
-						dp[i - 1][j - 1]
+						dp[i - 1][j - 1],
 					);
 			}
 		}
@@ -281,7 +279,7 @@ function unescapeJsonString(jsonString) {
 				return '\\';
 			default:
 				if (match.slice(0, 2) === '\\u') {
-					var codePoint = parseInt(match.slice(2), 16);
+					const codePoint = parseInt(match.slice(2), 16);
 					return String.fromCharCode(codePoint);
 				}
 				return match;

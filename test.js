@@ -1,3 +1,4 @@
+/* eslint-disable no-inline-comments */
 const TekstowoAPI = require("./index");
 const TekstowoAPIInstance = new TekstowoAPI(fetch, 0);
 (async () => {
