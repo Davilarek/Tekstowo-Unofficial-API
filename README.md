@@ -2,11 +2,16 @@
 Unofficial API for https://tekstowo.pl<br>
 This API has been designed for both Node.JS and Browserside JS.
 
-## Currently supported:
-- Getting the lyrics
-- Search
+## Features:
+- [x] Getting the lyrics
+- [x] Search
+- [ ] Grabbing song metadata
+- [ ] Popular songs list
+- [ ] Popular artists list
+
 ## Not planned:
 - Account management
+- Users
 
 ## Installing
 Note: this project uses [pnpm](https://pnpm.io/) and you should use it too. <br>
