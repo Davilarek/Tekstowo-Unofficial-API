@@ -144,7 +144,7 @@ class TekstowoAPI {
 			base2[name] = element;
 		}
 		if (includePageCount)
-			base2.INTERNAL_PAGE_COUNT = await this.getPagesForSong(artist, songName, responseText);
+			Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: await this.getPagesForSong(artist, songName, responseText), enumerable: false });
 		return base2;
 	}
 	/**
