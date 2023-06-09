@@ -47,13 +47,17 @@ class TekstowoAPILyrics {
 	 * @param {string} original
 	 * @param {string} translated
 	 * @param {{}} metadata
+	 * @param {string} lyricsName
 	 */
-	constructor(original, translated, metadata) {
+	constructor(original, translated, metadata, lyricsName) {
 		this.original = original;
 		this.translated = translated;
 		// eslint-disable-next-line no-inline-comments
 		if (metadata) // we don't want "undefined" to be printed out
 			this.metadata = metadata;
+		// eslint-disable-next-line no-inline-comments
+		if (lyricsName) // we don't want "undefined" to be printed out
+			this.lyricsName = lyricsName;
 	}
 }
 
@@ -109,15 +113,17 @@ class TekstowoAPI {
 		const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
 		// const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\r/g, '').replace(/\n{2,}/g, '\n');
 		const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
+		const parsedName = responseText.split('<h1 ')[1].split("</h1>")[0].split(`">`)[1];
 		const metaData = withMetadata ? await this.getMetadata(responseText, true) : undefined;
-		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData);
+		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName);
 	}
 	/**
 	 * @param {string} artist
 	 * @param {string} songName
 	 * @param {number} page
+	 * @param {boolean} includePageCount
 	 */
-	async searchLyrics(artist, songName, page) {
+	async searchLyrics(artist, songName, page, includePageCount = false) {
 		// if (artist == "")
 		// 	artist = undefined;
 		const requestOptions = new TekstowoAPIRequestOptions(
@@ -137,18 +143,24 @@ class TekstowoAPI {
 			const name = base1.split(`<a href="/piosenka,` + element + `.html" class="title" title="`)[1].split(`">`)[0];
 			base2[name] = element;
 		}
+		if (includePageCount)
+			base2.INTERNAL_PAGE_COUNT = await this.getPagesForSong(artist, songName, responseText);
 		return base2;
 	}
 	/**
 	 * @param {string} artist
 	 * @param {string} songName
+	 * @param {string} skipFetch
 	 */
-	async getPagesForSong(artist, songName) {
-		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName)), { method: "GET" },
-		);
-		const response = await this.makeRequest(requestOptions);
-		const responseText = unescapeJsonString(await response.text()).split("\n").join("");
+	async getPagesForSong(artist, songName, skipFetch = "") {
+		if (skipFetch == "") {
+			const requestOptions = new TekstowoAPIRequestOptions(
+				this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName)), { method: "GET" },
+			);
+			const response = await this.makeRequest(requestOptions);
+			skipFetch = unescapeJsonString(await response.text());
+		}
+		const responseText = skipFetch.split("\n").join("");
 		const base1 = getTextBetween(responseText, `<li class="page-item"><a class="page-link" href="`, `.html" `);
 		const last = base1[base1.length - 1];
 		if (!last)
