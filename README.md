@@ -11,6 +11,8 @@ This API has been designed for both Node.JS and Browserside JS.
 - [ ] Artist details
 - [ ] Missing translations list
 - [ ] Missing lyrics list
+- [ ] Translation edit history
+- [ ] Lyrics edit history
 
 ## Not planned:
 - User-related functionality (voting, login, submit lyrics, edit meta)
