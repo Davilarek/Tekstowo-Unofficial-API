@@ -198,7 +198,7 @@ class TekstowoAPI {
 		 */
 		const parse = (htmlString) => {
 			const names = getTextBetween(htmlString, "<tr><th>", '</th>').map(x => x.split(":")[0]);
-			const infos = getTextBetween(htmlString, "</th><td><p>", '</td>').map((x, y) => y == 0 ? x.split("</p><a")[0] : x).map(x => unescapeHtmlString(x.trimEnd()));
+			const infos = getTextBetween(htmlString, "</th><td><p>", '</td>').map((x, y) => y == 0 ? x.split("</p><a")[0] : x).map(x => unescapeHtmlString(x.trimEnd()).replace(/\r/g, '').replace(/\n{2,}/g, '\n'));
 			return constructObject(names, infos);
 		};
 		return parse(metricsTable);
