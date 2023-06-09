@@ -105,8 +105,8 @@ class TekstowoAPI {
 		const fail = responseText.replace(/\n{2,}/g, '\n').split("<title>")[1].split("</title>")[0].includes("404");
 		if (fail)
 			return null;
-		const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\n{2,}/g, '\n');
-		const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\n{2,}/g, '\n');
+		const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\r/g, '').replace(/\n{2,}/g, '\n');
+		const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\r/g, '').replace(/\n{2,}/g, '\n');
 		const metaData = withMetadata ? await this.getMetadata(responseText, true) : undefined;
 		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData);
 	}
