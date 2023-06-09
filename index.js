@@ -7,6 +7,11 @@ class TekstowoAPIRequestOptions {
 	 * @type {RequestInit}
 	 */
 	fetchOptions
+
+	/**
+	 * @param {string} url 
+	 * @param {RequestInit} fetchOptions 
+	 */
 	constructor(url, fetchOptions) {
 		this.url = url;
 		this.fetchOptions = fetchOptions;
@@ -43,6 +48,10 @@ const TekstowoAPIUrls = {
 class TekstowoAPILyrics {
 	original = ""
 	translated = ""
+	/**
+	 * @param {string} original
+	 * @param {string} translated
+	 */
 	constructor(original, translated) {
 		this.original = original;
 		this.translated = translated;
@@ -158,6 +167,11 @@ class TekstowoAPI {
 	}
 }
 
+/**
+ * 
+ * @param {Array<{str: string; distance: number;}>} distances
+ * @returns
+ */
 function findClosestString(distances) {
 	let lowestDistance = Infinity;
 	let closestString = '';
@@ -201,6 +215,9 @@ function levenshteinDistance(str1, str2) {
 	const m = str1.length;
 	const n = str2.length;
 
+	/**
+	 * @type {Array<Array<number>>}
+	 */
 	const dp = Array(m + 1)
 		.fill(null)
 		.map(() => Array(n + 1).fill(0));
