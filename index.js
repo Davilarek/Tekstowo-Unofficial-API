@@ -154,14 +154,19 @@ class TekstowoAPI {
 	 * @param {string} songName
 	 */
 	async getLyrics(artist, songName) {
+		if (artist == '')
+			artist = undefined;
 		// compare strings
 		const results = await this.searchLyrics(artist, songName);
-		const resultsMod = Object.keys(results).filter(x => x.split(" - ")[1]);
-		const a = findClosestString(levenshteinDistanceArray(resultsMod, songName));
+		const resultsMod = Object.keys(results).map(x => x.split(" - ")[1]);
+		const resultsFinal = artist ? Object.keys(results) : resultsMod;
+		const finalSearchString = artist ? artist + " - " + songName : songName;
+		const a = findClosestString(levenshteinDistanceArray(resultsFinal, finalSearchString));
 		// return a.closestString;
 		// console.log(results);
 		// console.log(a.closestString);
-		return await this.extractLyrics(results[a.closestString]);
+		const toExtract = resultsFinal.indexOf(a.closestString);
+		return await this.extractLyrics(Object.values(results)[toExtract]);
 	}
 }
 
