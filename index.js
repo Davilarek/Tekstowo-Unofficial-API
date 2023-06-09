@@ -46,10 +46,14 @@ class TekstowoAPILyrics {
 	/**
 	 * @param {string} original
 	 * @param {string} translated
+	 * @param {{}} metadata
 	 */
-	constructor(original, translated) {
+	constructor(original, translated, metadata) {
 		this.original = original;
 		this.translated = translated;
+		// eslint-disable-next-line no-inline-comments
+		if (metadata) // we don't want "undefined" to be printed out
+			this.metadata = metadata;
 	}
 }
 
@@ -90,8 +94,9 @@ class TekstowoAPI {
 	}
 	/**
 	 * @param {TekstowoAPILyricsID} songId
+	 * @param {boolean} withMetadata
 	 */
-	async extractLyrics(songId) {
+	async extractLyrics(songId, withMetadata = false) {
 		const requestOptions = new TekstowoAPIRequestOptions(
 			this.proxyThisUrl(TekstowoAPIUrls.LYRICS(songId)), { method: "GET" },
 		);
@@ -102,7 +107,8 @@ class TekstowoAPI {
 			return null;
 		const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\n{2,}/g, '\n');
 		const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\n{2,}/g, '\n');
-		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated);
+		const metaData = withMetadata ? await this.getMetadata(responseText, true) : undefined;
+		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData);
 	}
 	/**
 	 * @param {string} artist
@@ -168,6 +174,48 @@ class TekstowoAPI {
 		const toExtract = resultsFinal.indexOf(a.closestString);
 		return await this.extractLyrics(Object.values(results)[toExtract]);
 	}
+	/**
+	 * @param {TekstowoAPILyricsID | string} songIdOrHtml
+	 * @param {Boolean} useHTML
+	 */
+	async getMetadata(songIdOrHtml, useHTML = false) {
+		let responseText = null;
+		if (!useHTML) {
+			const requestOptions = new TekstowoAPIRequestOptions(
+				this.proxyThisUrl(TekstowoAPIUrls.LYRICS(songIdOrHtml)), { method: "GET" },
+			);
+			const response = await this.makeRequest(requestOptions);
+			responseText = unescapeJsonString(await response.text());
+			const fail = responseText.replace(/\n{2,}/g, '\n').split("<title>")[1].split("</title>")[0].includes("404");
+			if (fail)
+				return null;
+		}
+		const htmlText = useHTML ? songIdOrHtml : responseText;
+		const metricsTable = htmlText.split(`<div  class="metric">`)[1].split("</table>")[0];
+		/**
+		 * @param {string} htmlString
+		 * @returns {{}}
+		 */
+		const parse = (htmlString) => {
+			const names = getTextBetween(htmlString, "<tr><th>", '</th>').map(x => x.split(":")[0]);
+			const infos = getTextBetween(htmlString, "</th><td><p>", '</td>').map((x, y) => y == 0 ? x.split("</p><a")[0] : x).map(x => unescapeHtmlString(x.trimEnd()));
+			return constructObject(names, infos);
+		};
+		return parse(metricsTable);
+	}
+}
+
+/**
+ * @param {Array} keys
+ * @param {Array} values
+ * @returns {Object}
+ */
+function constructObject(keys, values) {
+	const obj = {};
+	for (let i = 0; i < keys.length; i++) {
+		obj[keys[i]] = values[i];
+	}
+	return obj;
 }
 
 /**
@@ -290,6 +338,18 @@ function unescapeJsonString(jsonString) {
 				return match;
 		}
 	});
+}
+
+/**
+ * @param {string} htmlString
+ * @returns {string}
+ */
+function unescapeHtmlString(htmlString) {
+	return htmlString.replace(/&amp;/g, '&')
+		.replace(/&lt;/g, '<')
+		.replace(/&gt;/g, '>')
+		.replace(/&quot;/g, '"')
+		.replace(/&#039;/g, "'");
 }
 
 /**
