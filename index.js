@@ -17,6 +17,8 @@ const TekstowoAPIProxyMethods = {
 	None: 0,
 	/** @type {number} */
 	AllOrigins: 1,
+	/** @type {number} */
+	SirJoshProxy: 2,
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -92,6 +94,8 @@ class TekstowoAPI {
 		switch (this.proxyMetod) {
 			case TekstowoAPIProxyMethods.AllOrigins:
 				return "https://api.allorigins.win/get?url=" + encodeURIComponent(url);
+			case TekstowoAPIProxyMethods.SirJoshProxy:
+				return "https://cors-get-proxy.sirjosh.workers.dev/?url=" + encodeURIComponent(url);
 			default:
 				return url;
 		}
