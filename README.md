@@ -5,7 +5,7 @@ This API has been designed for both Node.JS and Browserside JS.
 ## Features:
 - [x] Getting the lyrics
 - [x] Search
-- [ ] Grabbing song metadata
+- [x] Grabbing song metadata
 - [ ] Popular songs list
 - [ ] Popular artists list
 
