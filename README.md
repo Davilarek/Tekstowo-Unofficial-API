@@ -8,10 +8,12 @@ This API has been designed for both Node.JS and Browserside JS.
 - [x] Grabbing song metadata
 - [ ] Popular songs list
 - [ ] Popular artists list
+- [ ] Artist details
+- [ ] Missing translations list
+- [ ] Missing lyrics list
 
 ## Not planned:
-- Account management
-- Users
+- User-related functionality (voting, login, submit lyrics, edit meta)
 
 ## Installing
 Note: this project uses [pnpm](https://pnpm.io/) and you should use it too. <br>
