@@ -29,14 +29,14 @@ If you want to use the browser version, run:
 1. `pnpm install`
 2. `pnpm run build`
 3. Use `TekstowoAPI-browser.js` from `dist/` directory.
-4. Use `require("TekstowoAPI")`
+4. Use `require("./TekstowoAPI")`
 
 ## Example usage
 In [test.js](./test.js)
 Or [API.md](./docs/API.md)
 ### Browser only example
 ```js
-window.TekstowoAPI = new (require("TekstowoAPI"))(1); // 1 for allorigins proxy
+window.TekstowoAPI = new (require("./TekstowoAPI"))(1); // 1 for allorigins proxy
 await TekstowoAPI.getLyrics("HammerFall", "Last Man Standing");
 ```
 
