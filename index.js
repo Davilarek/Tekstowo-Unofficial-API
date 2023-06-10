@@ -79,9 +79,6 @@ class TekstowoAPI {
 	}
 	/**
 	 * @param {TekstowoAPIRequestOptions} options
-	 * param {object} options
-	 * param {string} options.url
-	 * param {RequestInit} options.fetchOptions
 	 */
 	async makeRequest(options) {
 		const localFetch = this.FetchImpl;
@@ -237,8 +234,20 @@ function constructObject(keys, values) {
 }
 
 /**
- * @param {Array<{str: string; distance: number;}>} distances
- * @returns
+ * @typedef Distance
+ * @property {string} str
+ * @property {number} distance
+ */
+
+/**
+ * @typedef DistanceCompareResult
+ * @property {string} closestString
+ * @property {number} lowestDistance
+ */
+
+/**
+ * @param {Array<Distance>} distances
+ * @returns {DistanceCompareResult}
  */
 function findClosestString(distances) {
 	let lowestDistance = Infinity;
@@ -260,7 +269,7 @@ function findClosestString(distances) {
 /**
  * @param {string[]} strArray
  * @param {string} targetStr
- * @returns
+ * @returns {Array<Distance>}
  */
 function levenshteinDistanceArray(strArray, targetStr) {
 	const distances = [];
@@ -277,7 +286,7 @@ function levenshteinDistanceArray(strArray, targetStr) {
 /**
  * @param {string} str1
  * @param {string} str2
- * @returns
+ * @returns {number}
  */
 function levenshteinDistance(str1, str2) {
 	const m = str1.length;
