@@ -224,7 +224,7 @@ packages:
     resolution: {integrity: sha512-BioO1xf3hFwz4kc6iBhI3ieDFompMhrMlnDFC4/0/vd5MokpuAc3R+LYbwTA9A5Yc9pq9UYPqffKpW2ObuwX5A==}
     dependencies:
       cipher-base: 1.0.4
-      des.js: 1.0.1
+      des.js: 1.1.0
       inherits: 2.0.4
       safe-buffer: 5.2.1
     dev: false
@@ -519,8 +519,8 @@ packages:
       through2: 2.0.5
     dev: false
 
-  /des.js@1.0.1:
-    resolution: {integrity: sha512-Q0I4pfFrv2VPd34/vfLrFOoRmlYj3OV50i7fskps1jZWK1kApMWWT9G6RRUeYedLcBDIhnSDaUvJMb3AhUlaEA==}
+  /des.js@1.1.0:
+    resolution: {integrity: sha512-r17GxjhUCjSRy8aiJpr8/UadFIzMzJGexI3Nmz4ADi9LYSFx4gTBp80+NaX/YsXWWLhpZ7v/v/ubEc/bCNfKwg==}
     dependencies:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
