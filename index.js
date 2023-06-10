@@ -63,8 +63,14 @@ class TekstowoAPILyrics {
 	}
 }
 
+/**
+ * just an Object
+ * @typedef TekstowoAPILyricsMetadata
+ */
+
 class TekstowoAPI {
 	/**
+	 * Creates a new TekstowoAPI instance
 	 * @param {fetch} FetchImpl
 	 * @param {TekstowoAPIProxyMethods} proxyMetod
 	 */
@@ -78,14 +84,20 @@ class TekstowoAPI {
 		this.proxyMetod = proxyMetod;
 	}
 	/**
+	 * Makes a request using TekstowoAPI#FetchImpl.
+	 * @see TekstowoAPI#FetchImpl
 	 * @param {TekstowoAPIRequestOptions} options
+	 * @returns {Promise<Response>}
 	 */
 	async makeRequest(options) {
 		const localFetch = this.FetchImpl;
 		return await localFetch(options.url, options.fetchOptions);
 	}
 	/**
+	 * Selects a proxy using TekstowoAPI#proxyMetod.
+	 * @see TekstowoAPI#proxyMetod
 	 * @param {string} url
+	 * @returns {string}
 	 */
 	proxyThisUrl(url) {
 		switch (this.proxyMetod) {
@@ -98,8 +110,10 @@ class TekstowoAPI {
 		}
 	}
 	/**
+	 * Downloads and parses lyrics page for specified arguments.
 	 * @param {TekstowoAPILyricsID} songId
 	 * @param {boolean} withMetadata
+	 * @returns {Promise<TekstowoAPILyrics | null>}
 	 */
 	async extractLyrics(songId, withMetadata = false) {
 		const requestOptions = new TekstowoAPIRequestOptions(
@@ -119,10 +133,12 @@ class TekstowoAPI {
 		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName);
 	}
 	/**
+	 * Downloads and parses search result page for specified arguments.
 	 * @param {string} artist
 	 * @param {string} songName
 	 * @param {number} page
 	 * @param {boolean} includePageCount
+	 * @returns {Promise<Object.<string, TekstowoAPILyricsID>>}
 	 */
 	async searchLyrics(artist, songName, page, includePageCount = false) {
 		// if (artist == "")
@@ -149,9 +165,12 @@ class TekstowoAPI {
 		return base2;
 	}
 	/**
+	 * Downloads and parses search result page and extracts pages count for specified arguments.
+	 * Alternatively, if skipFetch is not empty (""), re-fetching will be skipped and it will use the supplied HTML string.
 	 * @param {string} artist
 	 * @param {string} songName
 	 * @param {string} skipFetch
+	 * @returns {Promise<number>}
 	 */
 	async getPagesForSong(artist, songName, skipFetch = "") {
 		if (skipFetch == "") {
@@ -171,8 +190,10 @@ class TekstowoAPI {
 		return parseInt(lastNum);
 	}
 	/**
+	 * Downloads and parses search result page, then from list of results selects closest name match for specified arguments.
 	 * @param {string} artist
 	 * @param {string} songName
+	 * @returns {Promise<TekstowoAPILyrics | null>}
 	 */
 	async getLyrics(artist, songName) {
 		if (artist == '')
@@ -190,8 +211,11 @@ class TekstowoAPI {
 		return await this.extractLyrics(Object.values(results)[toExtract]);
 	}
 	/**
+	 * Downloads, parses lyrics page and extracts "metrics" section for specified arguments.
+	 * Alternatively, if useHTML is true, accepts HTML string from songIdOrHtml.
 	 * @param {TekstowoAPILyricsID | string} songIdOrHtml
 	 * @param {Boolean} useHTML
+	 * @returns {Promise<TekstowoAPILyricsMetadata | null>}
 	 */
 	async getMetadata(songIdOrHtml, useHTML = false) {
 		let responseText = null;

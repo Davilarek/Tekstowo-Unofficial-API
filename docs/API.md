@@ -31,6 +31,9 @@
 ## Typedefs
 
 <dl>
+<dt><a href="#TekstowoAPILyricsMetadata">TekstowoAPILyricsMetadata</a></dt>
+<dd><p>just an Object</p>
+</dd>
 <dt><a href="#Distance">Distance</a></dt>
 <dd></dd>
 <dt><a href="#DistanceCompareResult">DistanceCompareResult</a></dt>
@@ -73,17 +76,19 @@
 * [TekstowoAPI](#TekstowoAPI)
     * [new TekstowoAPI(FetchImpl, proxyMetod)](#new_TekstowoAPI_new)
     * [.FetchImpl](#TekstowoAPI+FetchImpl) : <code>fetch</code>
-    * [.makeRequest(options)](#TekstowoAPI+makeRequest)
-    * [.proxyThisUrl(url)](#TekstowoAPI+proxyThisUrl)
-    * [.extractLyrics(songId, withMetadata)](#TekstowoAPI+extractLyrics)
-    * [.searchLyrics(artist, songName, page, includePageCount)](#TekstowoAPI+searchLyrics)
-    * [.getPagesForSong(artist, songName, skipFetch)](#TekstowoAPI+getPagesForSong)
-    * [.getLyrics(artist, songName)](#TekstowoAPI+getLyrics)
-    * [.getMetadata(songIdOrHtml, useHTML)](#TekstowoAPI+getMetadata)
+    * [.makeRequest(options)](#TekstowoAPI+makeRequest) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.proxyThisUrl(url)](#TekstowoAPI+proxyThisUrl) ⇒ <code>string</code>
+    * [.extractLyrics(songId, withMetadata)](#TekstowoAPI+extractLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
+    * [.searchLyrics(artist, songName, page, includePageCount)](#TekstowoAPI+searchLyrics) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>
+    * [.getPagesForSong(artist, songName, skipFetch)](#TekstowoAPI+getPagesForSong) ⇒ <code>Promise.&lt;number&gt;</code>
+    * [.getLyrics(artist, songName)](#TekstowoAPI+getLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
+    * [.getMetadata(songIdOrHtml, useHTML)](#TekstowoAPI+getMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyricsMetadata\|null)&gt;</code>
 
 <a name="new_TekstowoAPI_new"></a>
 
 ### new TekstowoAPI(FetchImpl, proxyMetod)
+Creates a new TekstowoAPI instance
+
 
 | Param | Type |
 | --- | --- |
@@ -96,8 +101,11 @@
 **Kind**: instance property of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 <a name="TekstowoAPI+makeRequest"></a>
 
-### tekstowoAPI.makeRequest(options)
+### tekstowoAPI.makeRequest(options) ⇒ <code>Promise.&lt;Response&gt;</code>
+Makes a request using TekstowoAPI#FetchImpl.
+
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
+**See**: TekstowoAPI#FetchImpl  
 
 | Param | Type |
 | --- | --- |
@@ -105,8 +113,11 @@
 
 <a name="TekstowoAPI+proxyThisUrl"></a>
 
-### tekstowoAPI.proxyThisUrl(url)
+### tekstowoAPI.proxyThisUrl(url) ⇒ <code>string</code>
+Selects a proxy using TekstowoAPI#proxyMetod.
+
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
+**See**: TekstowoAPI#proxyMetod  
 
 | Param | Type |
 | --- | --- |
@@ -114,7 +125,9 @@
 
 <a name="TekstowoAPI+extractLyrics"></a>
 
-### tekstowoAPI.extractLyrics(songId, withMetadata)
+### tekstowoAPI.extractLyrics(songId, withMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
+Downloads and parses lyrics page for specified arguments.
+
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
 | Param | Type | Default |
@@ -124,7 +137,9 @@
 
 <a name="TekstowoAPI+searchLyrics"></a>
 
-### tekstowoAPI.searchLyrics(artist, songName, page, includePageCount)
+### tekstowoAPI.searchLyrics(artist, songName, page, includePageCount) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>
+Downloads and parses search result page for specified arguments.
+
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
 | Param | Type | Default |
@@ -136,7 +151,9 @@
 
 <a name="TekstowoAPI+getPagesForSong"></a>
 
-### tekstowoAPI.getPagesForSong(artist, songName, skipFetch)
+### tekstowoAPI.getPagesForSong(artist, songName, skipFetch) ⇒ <code>Promise.&lt;number&gt;</code>
+Downloads and parses search result page and extracts pages count for specified arguments.Alternatively, if skipFetch is not empty (""), re-fetching will be skipped and it will use the supplied HTML string.
+
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
 | Param | Type |
@@ -147,7 +164,9 @@
 
 <a name="TekstowoAPI+getLyrics"></a>
 
-### tekstowoAPI.getLyrics(artist, songName)
+### tekstowoAPI.getLyrics(artist, songName) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
+Downloads and parses search result page, then from list of results selects closest name match for specified arguments.
+
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
 | Param | Type |
@@ -157,7 +176,9 @@
 
 <a name="TekstowoAPI+getMetadata"></a>
 
-### tekstowoAPI.getMetadata(songIdOrHtml, useHTML)
+### tekstowoAPI.getMetadata(songIdOrHtml, useHTML) ⇒ <code>Promise.&lt;(TekstowoAPILyricsMetadata\|null)&gt;</code>
+Downloads, parses lyrics page and extracts "metrics" section for specified arguments.Alternatively, if useHTML is true, accepts HTML string from songIdOrHtml.
+
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
 | Param | Type | Default |
@@ -249,6 +270,12 @@
 | start | <code>string</code> | 
 | end | <code>string</code> | 
 
+<a name="TekstowoAPILyricsMetadata"></a>
+
+## TekstowoAPILyricsMetadata
+just an Object
+
+**Kind**: global typedef  
 <a name="Distance"></a>
 
 ## Distance
