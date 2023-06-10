@@ -40,6 +40,10 @@ window.TekstowoAPI = new (require("./TekstowoAPI"))(1); // 1 for allorigins prox
 await TekstowoAPI.getLyrics("HammerFall", "Last Man Standing");
 ```
 
+## Stuff used
+- https://github.com/jsdoc2md/jsdoc-to-markdown
+- https://github.com/browserify/browserify
+
 ## Please use the API responsibly
 Please ensure that you use this API responsibly and for legitimate purposes only. Do not spam the Tekstowo server.
 
