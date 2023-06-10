@@ -25,6 +25,6 @@ jobs:
         buildName=$(date "+%Y%m%d%H%M%S")
         gh release create $buildName
         gh release upload $buildName dist/TekstowoAPI-browser.js
-        gh release edit build --title $buildName
+        gh release edit $buildName --title $buildName
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
