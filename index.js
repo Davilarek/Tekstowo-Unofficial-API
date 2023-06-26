@@ -229,7 +229,7 @@ class TekstowoAPI {
 				const name = rawSongs.split(splitTarget + element + `.html" class="title" title="`)[1].split(`">`)[0];
 				base2[name] = element;
 			}
-			if (includePageCount === true)
+			if (includePageCount === true && onlySongs === true)
 				Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: returnVal.pageCount, enumerable: false });
 			return base2;
 		};
@@ -245,7 +245,7 @@ class TekstowoAPI {
 				const name = rawArtists.split(splitTarget + element + `.html" class="title" title="`)[1].split(`">`)[0];
 				base2[name] = element;
 			}
-			if (includePageCount === true)
+			if (includePageCount === true && onlyArtists === true)
 				Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: returnVal.pageCount, enumerable: false });
 			return base2;
 		};
