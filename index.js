@@ -27,6 +27,19 @@ class TekstowoAPILyricsID extends String { }
 // eslint-disable-next-line no-unused-vars
 class TekstowoAPIArtistID extends String { }
 
+class TekstowoAPISearchResults {
+	/**
+	 * @param {Object.<string, TekstowoAPILyricsID>} songs
+	 * @param {Object.<string, TekstowoAPIArtistID>} artists
+	 * @param {number} pageCount
+	 */
+	constructor(songs, artists, pageCount) {
+		this.songs = songs;
+		this.artists = artists;
+		this.pageCount = pageCount;
+	}
+}
+
 const TekstowoAPIUrls = {
 	/**
 	 * @param {TekstowoAPILyricsID} id
@@ -179,10 +192,10 @@ class TekstowoAPI {
 	 * @param {string} songName
 	 * @param {Object} options
 	 * @param {number} options.page
-	 * @param {boolean} options.includePageCount Adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong.
+	 * @param {boolean} options.includePageCount If `onlyArtists` or `onlySongs` is true, adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong. If not, sets the `pageCount` property of TekstowoAPISearchResults.
 	 * @param {boolean} options.onlyArtists If true, skips extracting songs and returns only artist list.
 	 * @param {boolean} options.onlySongs If true, skips extracting artists and returns only song list.
-	 * @returns {Promise<Object.<string, TekstowoAPILyricsID | TekstowoAPIArtistID>>}
+	 * @returns {Promise<Object.<string, TekstowoAPILyricsID | TekstowoAPIArtistID> | TekstowoAPISearchResults>}
 	 */
 	async search(artist, songName, options) {
 		const { page, includePageCount, onlySongs, onlyArtists } = options;
@@ -200,7 +213,7 @@ class TekstowoAPI {
 		const baseForScrapping = responseText.split(`:</h2>`);
 		const rawSongs = baseForScrapping[1].split("`<h2 class=")[0];
 		const rawArtists = baseForScrapping[2].split(`<nav`)[0];
-		const returnVal = {};
+		const returnVal = new TekstowoAPISearchResults();
 		if (includePageCount === true)
 			returnVal.pageCount = await this.getPagesForSong(artist, songName, responseText);
 		// debugger;
