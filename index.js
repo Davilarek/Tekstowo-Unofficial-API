@@ -211,8 +211,9 @@ class TekstowoAPI {
 		const responseText = unescapeJsonString(await response.text());
 		// const baseForScrapping = responseText.split(`:</h2>`)[1].split(`<h2 class="`)[0];
 		const baseForScrapping = responseText.split(`:</h2>`);
-		const rawSongs = baseForScrapping[1].split("`<h2 class=")[0];
-		const rawArtists = baseForScrapping[2].split(`<nav`)[0];
+		// const songsNum = 1;
+		const rawSongs = songName == "" ? "" : baseForScrapping[1].split("`<h2 class=")[0];
+		const rawArtists = artist == "" ? "" : baseForScrapping[songName == "" ? 1 : 2].split(`<nav`)[0];
 		const returnVal = new TekstowoAPISearchResults();
 		if (includePageCount === true)
 			returnVal.pageCount = await this.getPagesForSong(artist, songName, responseText);
