@@ -142,12 +142,12 @@ Downloads and parses search result page for specified arguments.
 
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
-| Param | Type | Default |
-| --- | --- | --- |
-| artist | <code>string</code> |  | 
-| songName | <code>string</code> |  | 
-| page | <code>number</code> |  | 
-| includePageCount | <code>boolean</code> | <code>false</code> | 
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| artist | <code>string</code> |  |  |
+| songName | <code>string</code> |  |  |
+| page | <code>number</code> |  |  |
+| includePageCount | <code>boolean</code> | <code>false</code> | Adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong. |
 
 <a name="TekstowoAPI+getPagesForSong"></a>
 

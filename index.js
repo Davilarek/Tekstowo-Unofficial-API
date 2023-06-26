@@ -137,7 +137,7 @@ class TekstowoAPI {
 	 * @param {string} artist
 	 * @param {string} songName
 	 * @param {number} page
-	 * @param {boolean} includePageCount
+	 * @param {boolean} includePageCount Adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong.
 	 * @returns {Promise<Object.<string, TekstowoAPILyricsID>>}
 	 */
 	async searchLyrics(artist, songName, page, includePageCount = false) {
