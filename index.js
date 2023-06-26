@@ -24,6 +24,9 @@ const TekstowoAPIProxyMethods = {
 // eslint-disable-next-line no-unused-vars
 class TekstowoAPILyricsID extends String { }
 
+// eslint-disable-next-line no-unused-vars
+class TekstowoAPIArtistID extends String { }
+
 const TekstowoAPIUrls = {
 	/**
 	 * @param {TekstowoAPILyricsID} id
@@ -136,35 +139,112 @@ class TekstowoAPI {
 	}
 	/**
 	 * Downloads and parses search result page for specified arguments.
+	 * @deprecated Use `search` instead.
 	 * @param {string} artist
 	 * @param {string} songName
 	 * @param {number} page
 	 * @param {boolean} includePageCount Adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong.
 	 * @returns {Promise<Object.<string, TekstowoAPILyricsID>>}
 	 */
+	// async searchLyrics(artist, songName, page, includePageCount = false) {
+	// 	// if (artist == "")
+	// 	// 	artist = undefined;
+	// 	const requestOptions = new TekstowoAPIRequestOptions(
+	// 		this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName, page)), { method: "GET" },
+	// 	);
+	// 	const response = await this.makeRequest(requestOptions);
+	// 	const responseText = unescapeJsonString(await response.text());
+	// 	const base1 = responseText.split(`:</h2>`)[1].split(`<h2 class="`)[0];
+	// 	const extractedIds = getTextBetween(base1, `<a href="/piosenka,`, `.html" class="`);
+	// 	// const extractedNames = getTextBetween(base1, `<a href="/piosenka,`, `.html" class="`);
+	// 	/**
+	// 	 * @type {Object.<string, TekstowoAPILyricsID>}
+	// 	 */
+	// 	const base2 = {};
+	// 	for (let i = 0; i < extractedIds.length; i++) {
+	// 		const element = extractedIds[i];
+	// 		const name = base1.split(`<a href="/piosenka,` + element + `.html" class="title" title="`)[1].split(`">`)[0];
+	// 		base2[name] = element;
+	// 	}
+	// 	if (includePageCount)
+	// 		Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: await this.getPagesForSong(artist, songName, responseText), enumerable: false });
+	// 	return base2;
+	// }
 	async searchLyrics(artist, songName, page, includePageCount = false) {
-		// if (artist == "")
-		// 	artist = undefined;
+		return await this.search(artist, songName, { page, includePageCount, onlySongs: true });
+	}
+	/**
+	 * Downloads and parses search result page for specified arguments.
+	 * @param {string} artist
+	 * @param {string} songName
+	 * @param {Object} options
+	 * @param {number} options.page
+	 * @param {boolean} options.includePageCount Adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong.
+	 * @param {boolean} options.onlyArtists If true, skips extracting songs and returns only artist list.
+	 * @param {boolean} options.onlySongs If true, skips extracting artists and returns only song list.
+	 * @returns {Promise<Object.<string, TekstowoAPILyricsID | TekstowoAPIArtistID>>}
+	 */
+	async search(artist, songName, options) {
+		const { page, includePageCount, onlySongs, onlyArtists } = options;
+
+		if (onlyArtists === true && onlySongs === true)
+			throw new Error("Wong usage! Cannot have `onlySongs` and `onlyArtists` both true!");
+
+		/* basic stuff */
 		const requestOptions = new TekstowoAPIRequestOptions(
 			this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName, page)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
-		const base1 = responseText.split(`:</h2>`)[1].split(`<h2 class="`)[0];
-		const extractedIds = getTextBetween(base1, `<a href="/piosenka,`, `.html" class="`);
-		// const extractedNames = getTextBetween(base1, `<a href="/piosenka,`, `.html" class="`);
-		/**
-		 * @type {Object.<string, TekstowoAPILyricsID>}
-		 */
-		const base2 = {};
-		for (let i = 0; i < extractedIds.length; i++) {
-			const element = extractedIds[i];
-			const name = base1.split(`<a href="/piosenka,` + element + `.html" class="title" title="`)[1].split(`">`)[0];
-			base2[name] = element;
+		// const baseForScrapping = responseText.split(`:</h2>`)[1].split(`<h2 class="`)[0];
+		const baseForScrapping = responseText.split(`:</h2>`);
+		const rawSongs = baseForScrapping[1].split("`<h2 class=")[0];
+		const rawArtists = baseForScrapping[2].split(`<nav`)[0];
+		const returnVal = {};
+		if (includePageCount === true)
+			returnVal.pageCount = await this.getPagesForSong(artist, songName, responseText);
+		// debugger;
+		const extractSongsList = async () => {
+			/**
+			 * @type {Object.<string, TekstowoAPILyricsID>}
+			 */
+			const base2 = {};
+			const splitTarget = `<a href="/piosenka,`;
+			const extractedIds = getTextBetween(rawSongs, splitTarget, `.html" class="`);
+			for (let i = 0; i < extractedIds.length; i++) {
+				const element = extractedIds[i];
+				const name = rawSongs.split(splitTarget + element + `.html" class="title" title="`)[1].split(`">`)[0];
+				base2[name] = element;
+			}
+			if (includePageCount === true)
+				Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: returnVal.pageCount, enumerable: false });
+			return base2;
+		};
+		const extractArtistsList = async () => {
+			/**
+			 * @type {Object.<string, TekstowoAPIArtistID>}
+			 */
+			const base2 = {};
+			const splitTarget = `<a href="/piosenki_artysty,`;
+			const extractedIds = getTextBetween(rawArtists, splitTarget, `.html" class="`);
+			for (let i = 0; i < extractedIds.length; i++) {
+				const element = extractedIds[i];
+				const name = rawArtists.split(splitTarget + element + `.html" class="title" title="`)[1].split(`">`)[0];
+				base2[name] = element;
+			}
+			if (includePageCount === true)
+				Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: returnVal.pageCount, enumerable: false });
+			return base2;
+		};
+		if (onlySongs === true)
+			return await extractSongsList();
+		else if (onlyArtists === true)
+			return await extractArtistsList();
+		else {
+			returnVal.songs = await extractSongsList();
+			returnVal.artists = await extractArtistsList();
+			return returnVal;
 		}
-		if (includePageCount)
-			Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: await this.getPagesForSong(artist, songName, responseText), enumerable: false });
-		return base2;
 	}
 	/**
 	 * Downloads and parses search result page and extracts pages count for specified arguments.

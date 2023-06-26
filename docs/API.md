@@ -79,7 +79,8 @@
     * [.makeRequest(options)](#TekstowoAPI+makeRequest) ⇒ <code>Promise.&lt;Response&gt;</code>
     * [.proxyThisUrl(url)](#TekstowoAPI+proxyThisUrl) ⇒ <code>string</code>
     * [.extractLyrics(songId, withMetadata)](#TekstowoAPI+extractLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
-    * [.searchLyrics(artist, songName, page, includePageCount)](#TekstowoAPI+searchLyrics) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>
+    * ~~[.searchLyrics(artist, songName, page, includePageCount)](#TekstowoAPI+searchLyrics) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>~~
+    * [.search(artist, songName, options)](#TekstowoAPI+search) ⇒ <code>Promise.&lt;Object.&lt;string, (TekstowoAPILyricsID\|TekstowoAPIArtistID)&gt;&gt;</code>
     * [.getPagesForSong(artist, songName, skipFetch)](#TekstowoAPI+getPagesForSong) ⇒ <code>Promise.&lt;number&gt;</code>
     * [.getLyrics(artist, songName)](#TekstowoAPI+getLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * [.getMetadata(songIdOrHtml, useHTML)](#TekstowoAPI+getMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyricsMetadata\|null)&gt;</code>
@@ -137,7 +138,9 @@ Downloads and parses lyrics page for specified arguments.
 
 <a name="TekstowoAPI+searchLyrics"></a>
 
-### tekstowoAPI.searchLyrics(artist, songName, page, includePageCount) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>
+### ~~tekstowoAPI.searchLyrics(artist, songName, page, includePageCount) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>~~
+***Deprecated***
+
 Downloads and parses search result page for specified arguments.
 
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
@@ -148,6 +151,23 @@ Downloads and parses search result page for specified arguments.
 | songName | <code>string</code> |  |  |
 | page | <code>number</code> |  |  |
 | includePageCount | <code>boolean</code> | <code>false</code> | Adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong. |
+
+<a name="TekstowoAPI+search"></a>
+
+### tekstowoAPI.search(artist, songName, options) ⇒ <code>Promise.&lt;Object.&lt;string, (TekstowoAPILyricsID\|TekstowoAPIArtistID)&gt;&gt;</code>
+Downloads and parses search result page for specified arguments.
+
+**Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| artist | <code>string</code> |  |
+| songName | <code>string</code> |  |
+| options | <code>Object</code> |  |
+| options.page | <code>number</code> |  |
+| options.includePageCount | <code>boolean</code> | Adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong. |
+| options.onlyArtists | <code>boolean</code> | If true, skips extracting songs and returns only artist list. |
+| options.onlySongs | <code>boolean</code> | If true, skips extracting artists and returns only song list. |
 
 <a name="TekstowoAPI+getPagesForSong"></a>
 
