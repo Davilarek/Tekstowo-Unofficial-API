@@ -17,4 +17,6 @@ const TekstowoAPIInstance = new TekstowoAPI(fetch, 0);
     console.log(await TekstowoAPIInstance.getMetadata("linkin_park,lost")); // ok
     console.log(await TekstowoAPIInstance.getMetadata("frontside,wspomnienia_jak_relikwie")); // ok
     console.log(await TekstowoAPIInstance.extractLyrics("frontside,wspomnienia_jak_relikwie", true)); // ok
+    console.log(await TekstowoAPIInstance.getMetadata("ed_sheeran,shape_of_you_")); // ok
+    console.log(await TekstowoAPIInstance.getMetadata("finger_eleven,paralyzer")); // ok
 })();
