@@ -101,8 +101,10 @@ class TekstowoAPI {
 	 */
 	proxyThisUrl(url) {
 		switch (this.proxyMetod) {
+			/* https://github.com/gnuns/allorigins */
 			case TekstowoAPIProxyMethods.AllOrigins:
 				return "https://api.allorigins.win/get?url=" + encodeURIComponent(url);
+			/* https://github.com/SirJosh3917/cors-get-proxy */
 			case TekstowoAPIProxyMethods.SirJoshProxy:
 				return "https://cors-get-proxy.sirjosh.workers.dev/?url=" + encodeURIComponent(url);
 			default:
