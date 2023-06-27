@@ -277,13 +277,19 @@ class TekstowoAPI {
 			skipFetch = unescapeJsonString(await response.text());
 		}
 		const responseText = skipFetch.split("\n").join("");
-		const base1 = getTextBetween(responseText, `<li class="page-item"><a class="page-link" href="`, `.html" `);
+		const base1 = getTextBetween(responseText, `<a class="page-link" href="`, `.html" `);
 		const last = base1[base1.length - 1];
 		if (!last)
 			return 1;
+		// const duplicates = getDuplicates(base1);
 		// const lastNum = last.split(",strona,").length > 1 ? last.split(",strona,")[1] : 1;
 		const lastNum = last.split(",strona,")[1];
-		return parseInt(lastNum);
+		const final = parseInt(lastNum);
+		const split = getTextBetween(responseText, `<nav aria-label="`, `</nav>`);
+		const altMethod = getTextBetween(split[0], `title="`, `"`).length;
+		if (Math.abs(final - altMethod) > 3)
+			return final;
+		return altMethod;
 	}
 	/**
 	 * Downloads and parses search result page, then from list of results selects closest name match for specified arguments.
@@ -341,6 +347,22 @@ class TekstowoAPI {
 		};
 		return parse(metricsTable);
 	}
+}
+
+/**
+ * @param {Array} arr
+ * @returns {Array}
+ */
+// eslint-disable-next-line no-unused-vars
+function getDuplicates(arr) {
+	const results = [];
+	arr.sort();
+	let last = arr[0];
+	for (let i = 1; i < arr.length; i++) {
+		if (arr[i] == last) results.push(last);
+		last = arr[i];
+	}
+	return results;
 }
 
 /**
