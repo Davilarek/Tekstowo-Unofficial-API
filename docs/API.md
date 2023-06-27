@@ -14,6 +14,8 @@
 ## Functions
 
 <dl>
+<dt><a href="#getDuplicates">getDuplicates(arr)</a> ⇒ <code>Array</code></dt>
+<dd></dd>
 <dt><a href="#constructObject">constructObject(keys, values)</a> ⇒ <code>Object</code></dt>
 <dd></dd>
 <dt><a href="#findClosestString">findClosestString(distances)</a> ⇒ <code><a href="#DistanceCompareResult">DistanceCompareResult</a></code></dt>
@@ -97,7 +99,7 @@
     * [.extractLyrics(songId, withMetadata)](#TekstowoAPI+extractLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * ~~[.searchLyrics(artist, songName, page, includePageCount)](#TekstowoAPI+searchLyrics) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>~~
     * [.search(artist, songName, options)](#TekstowoAPI+search) ⇒ <code>Promise.&lt;(Object.&lt;string, (TekstowoAPILyricsID\|TekstowoAPIArtistID)&gt;\|TekstowoAPISearchResults)&gt;</code>
-    * [.getPagesForSong(artist, songName, skipFetch)](#TekstowoAPI+getPagesForSong) ⇒ <code>Promise.&lt;number&gt;</code>
+    * [.getPagesForSong(artist, songName, skipFetch, from)](#TekstowoAPI+getPagesForSong) ⇒ <code>Promise.&lt;number&gt;</code>
     * [.getLyrics(artist, songName)](#TekstowoAPI+getLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * [.getMetadata(songIdOrHtml, useHTML)](#TekstowoAPI+getMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyricsMetadata\|null)&gt;</code>
 
@@ -187,16 +189,17 @@ Downloads and parses search result page for specified arguments.
 
 <a name="TekstowoAPI+getPagesForSong"></a>
 
-### tekstowoAPI.getPagesForSong(artist, songName, skipFetch) ⇒ <code>Promise.&lt;number&gt;</code>
+### tekstowoAPI.getPagesForSong(artist, songName, skipFetch, from) ⇒ <code>Promise.&lt;number&gt;</code>
 Downloads and parses search result page and extracts pages count for specified arguments.Alternatively, if skipFetch is not empty (""), re-fetching will be skipped and it will use the supplied HTML string.
 
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
-| Param | Type |
-| --- | --- |
-| artist | <code>string</code> | 
-| songName | <code>string</code> | 
-| skipFetch | <code>string</code> | 
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| artist | <code>string</code> |  |  |
+| songName | <code>string</code> |  |  |
+| skipFetch | <code>string</code> |  |  |
+| from | <code>number</code> | <code>1</code> | Debug only, don't use |
 
 <a name="TekstowoAPI+getLyrics"></a>
 
@@ -233,6 +236,15 @@ Downloads, parses lyrics page and extracts "metrics" section for specified argum
 | None | <code>number</code> | <code>0</code> | 
 | AllOrigins | <code>number</code> | <code>1</code> | 
 | SirJoshProxy | <code>number</code> | <code>2</code> | 
+
+<a name="getDuplicates"></a>
+
+## getDuplicates(arr) ⇒ <code>Array</code>
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| arr | <code>Array</code> | 
 
 <a name="constructObject"></a>
 
