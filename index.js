@@ -266,30 +266,42 @@ class TekstowoAPI {
 	 * @param {string} artist
 	 * @param {string} songName
 	 * @param {string} skipFetch
+	 * @param {number} from Debug only, don't use
 	 * @returns {Promise<number>}
 	 */
-	async getPagesForSong(artist, songName, skipFetch = "") {
+	async getPagesForSong(artist, songName, skipFetch = "", from = 1) {
 		if (skipFetch == "") {
 			const requestOptions = new TekstowoAPIRequestOptions(
-				this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName)), { method: "GET" },
+				this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName, from)), { method: "GET" },
 			);
 			const response = await this.makeRequest(requestOptions);
 			skipFetch = unescapeJsonString(await response.text());
 		}
 		const responseText = skipFetch.split("\n").join("");
-		const base1 = getTextBetween(responseText, `<a class="page-link" href="`, `.html" `);
+		const base1 = getTextBetween(responseText, `<li class="page-item"><a class="page-link" href="`, `.html" `);
 		const last = base1[base1.length - 1];
 		if (!last)
 			return 1;
 		// const duplicates = getDuplicates(base1);
 		// const lastNum = last.split(",strona,").length > 1 ? last.split(",strona,")[1] : 1;
 		const lastNum = last.split(",strona,")[1];
+		const base2 = getTextBetween(responseText, `<a class="page-link" href="`, `</a>`);
+		const tested = base2[base2.length - 1].includes(`&gt;&gt;`) ? base2[base2.length - 1].split("strona,")[1].split(".html")[0] : null;
+		// const filtered = base2.filter(x => x.includes(`&lt;&lt;`) || x.includes(`&gt;&gt;`));
 		const final = parseInt(lastNum);
-		const split = getTextBetween(responseText, `<nav aria-label="`, `</nav>`);
-		const altMethod = getTextBetween(split[0], `title="`, `"`).length;
-		if (Math.abs(final - altMethod) > 3)
+		if (tested == null && base2[0].includes(`&lt;&lt;`))
+			return final + 1;
+		if (tested != null && parseInt(tested) == final)
 			return final;
-		return altMethod;
+		// if (filtered.length == 1)
+		// 	final++;
+		// const final = parseInt(lastNum);
+		// const split = getTextBetween(responseText, `<nav aria-label="`, `</nav>`);
+		// const altMethod = getTextBetween(split[0], `title="`, `"`).length;
+		// if (Math.abs(final - altMethod) > 1)
+		// 	return final;
+		// return altMethod;
+		return final;
 	}
 	/**
 	 * Downloads and parses search result page, then from list of results selects closest name match for specified arguments.
