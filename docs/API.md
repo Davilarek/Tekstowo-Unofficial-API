@@ -96,7 +96,7 @@
     * [.FetchImpl](#TekstowoAPI+FetchImpl) : <code>fetch</code>
     * [.makeRequest(options)](#TekstowoAPI+makeRequest) ⇒ <code>Promise.&lt;Response&gt;</code>
     * [.proxyThisUrl(url)](#TekstowoAPI+proxyThisUrl) ⇒ <code>string</code>
-    * [.extractLyrics(songId, withMetadata)](#TekstowoAPI+extractLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
+    * [.extractLyrics(songId, options)](#TekstowoAPI+extractLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * ~~[.searchLyrics(artist, songName, page, includePageCount)](#TekstowoAPI+searchLyrics) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>~~
     * [.search(artist, songName, options)](#TekstowoAPI+search) ⇒ <code>Promise.&lt;(Object.&lt;string, (TekstowoAPILyricsID\|TekstowoAPIArtistID)&gt;\|TekstowoAPISearchResults)&gt;</code>
     * [.getPagesForSong(artist, songName, skipFetch, from)](#TekstowoAPI+getPagesForSong) ⇒ <code>Promise.&lt;number&gt;</code>
@@ -144,15 +144,17 @@ Selects a proxy using TekstowoAPI#proxyMetod.
 
 <a name="TekstowoAPI+extractLyrics"></a>
 
-### tekstowoAPI.extractLyrics(songId, withMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
+### tekstowoAPI.extractLyrics(songId, options) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
 Downloads and parses lyrics page for specified arguments.
 
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
-| Param | Type | Default |
+| Param | Type | Description |
 | --- | --- | --- |
-| songId | <code>TekstowoAPILyricsID</code> |  | 
-| withMetadata | <code>boolean</code> | <code>false</code> | 
+| songId | <code>TekstowoAPILyricsID</code> |  |
+| options | <code>Object</code> | Options for extraction. Providing a boolean here is deprecated. |
+| options.withMetadata | <code>boolean</code> |  |
+| options.withVideoId | <code>boolean</code> |  |
 
 <a name="TekstowoAPI+searchLyrics"></a>
 
