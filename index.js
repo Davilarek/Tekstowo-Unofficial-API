@@ -67,7 +67,7 @@ class TekstowoAPILyrics {
 	 * @param {{}} metadata
 	 * @param {string} lyricsName
 	 */
-	constructor(original, translated, metadata, lyricsName) {
+	constructor(original, translated, metadata, lyricsName, video) {
 		this.original = original;
 		this.translated = translated;
 		// eslint-disable-next-line no-inline-comments
@@ -76,6 +76,8 @@ class TekstowoAPILyrics {
 		// eslint-disable-next-line no-inline-comments
 		if (lyricsName) // we don't want "undefined" to be printed out
 			this.lyricsName = lyricsName;
+		if (video)
+			this.videoId = video;
 	}
 }
 
@@ -130,10 +132,13 @@ class TekstowoAPI {
 	/**
 	 * Downloads and parses lyrics page for specified arguments.
 	 * @param {TekstowoAPILyricsID} songId
-	 * @param {boolean} withMetadata
+	 * @param {Object} options Options for extraction. Providing a boolean here is deprecated.
+	 * @param {boolean} options.withMetadata
+	 * @param {boolean} options.withVideoId
 	 * @returns {Promise<TekstowoAPILyrics | null>}
 	 */
-	async extractLyrics(songId, withMetadata = false) {
+	async extractLyrics(songId, options = {}) {
+		const { withMetadata, withVideoId } = (typeof options == 'boolean' ? { withMetadata: options } : options);
 		const requestOptions = new TekstowoAPIRequestOptions(
 			this.proxyThisUrl(TekstowoAPIUrls.LYRICS(songId)), { method: "GET" },
 		);
@@ -147,8 +152,14 @@ class TekstowoAPI {
 		// const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\r/g, '').replace(/\n{2,}/g, '\n');
 		const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
 		const parsedName = responseText.split('<h1 ')[1].split("</h1>")[0].split(`">`)[1];
-		const metaData = withMetadata ? await this.getMetadata(responseText, true) : undefined;
-		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName);
+		const metaData = withMetadata === true ? await this.getMetadata(responseText, true) : undefined;
+		const findVideoId = () => {
+			return responseText.includes("//filmiki4.maxart.pl/tplayer3n/#")
+				? new URL("http://localhost/?" + responseText.split("//filmiki4.maxart.pl/tplayer3n/#")[1].split("\"")[0]).searchParams.get("videoId")
+				: null;
+		};
+		const videoId = withVideoId === true ? findVideoId() : null;
+		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId);
 	}
 	/**
 	 * Downloads and parses search result page for specified arguments.
