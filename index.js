@@ -355,7 +355,7 @@ class TekstowoAPI {
 				return null;
 		}
 		const htmlText = useHTML ? songIdOrHtml : responseText;
-		const metricsTable = htmlText.split(`<div  class="metric">`)[1].split("</table>")[0];
+		const metricsTable = (htmlText.split(`<div  class="metric">`)[1] ?? htmlText.split(`<div class="metric">`)[1]).split("</table>")[0];
 		/**
 		 * @param {string} htmlString
 		 * @returns {{}}
@@ -368,7 +368,7 @@ class TekstowoAPI {
 			// possibly makes stuff break? /\
 			return constructObject(names, infos);
 		};
-		return parse(metricsTable);
+		return parse(metricsTable.replace(/\t/g, "").replace(/\n/g, ""));
 	}
 }
 
