@@ -9,10 +9,9 @@
   "keywords": [],
   "author": "Davilarek",
   "license": "ISC",
-  "dependencies": {
-    "browserify": "^17.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "jsdoc-to-markdown": "^8.0.0"
+    "jsdoc-to-markdown": "^8.0.0",
+    "browserify": "^17.0.0"
   }
 }
