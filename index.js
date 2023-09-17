@@ -208,7 +208,7 @@ class TekstowoAPI {
 	 * @param {boolean} options.onlySongs If true, skips extracting artists and returns only song list.
 	 * @returns {Promise<Object.<string, TekstowoAPILyricsID | TekstowoAPIArtistID> | TekstowoAPISearchResults>}
 	 */
-	async search(artist, songName, options) {
+	async search(artist = "", songName = "", options) {
 		const { page, includePageCount, onlySongs, onlyArtists } = options;
 
 		if (onlyArtists === true && onlySongs === true)
