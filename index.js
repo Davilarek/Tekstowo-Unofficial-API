@@ -150,7 +150,7 @@ class TekstowoAPI {
 		// const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\r/g, '').replace(/\n{2,}/g, '\n');
 		const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
 		// const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\r/g, '').replace(/\n{2,}/g, '\n');
-		const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
+		const lyricsTranslated = ((responseText.split(`inner-text">`)[2] ?? responseText.split(`inner-text ">`)[1]).split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
 		const parsedName = responseText.split('<h1 ')[1].split("</h1>")[0].split(`">`)[1];
 		const metaData = withMetadata === true ? await this.getMetadata(responseText, true) : undefined;
 		const findVideoId = () => {
