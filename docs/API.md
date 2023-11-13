@@ -9,6 +9,8 @@
 <dd></dd>
 <dt><a href="#TekstowoAPI">TekstowoAPI</a></dt>
 <dd></dd>
+<dt><a href="#KVPair">KVPair</a></dt>
+<dd></dd>
 </dl>
 
 ## Functions
@@ -106,7 +108,7 @@
     * [.getPagesForSong(artist, songName, skipFetch, from)](#TekstowoAPI+getPagesForSong) ⇒ <code>Promise.&lt;number&gt;</code>
     * [.getLyrics(artist, songName)](#TekstowoAPI+getLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * [.getMetadata(songIdOrHtml, useHTML)](#TekstowoAPI+getMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyricsMetadata\|null)&gt;</code>
-    * [.getArtistsSongList(artistId, options)](#TekstowoAPI+getArtistsSongList) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>
+    * [.getArtistsSongList(artistId, options)](#TekstowoAPI+getArtistsSongList) ⇒ <code>Promise.&lt;{pageCount: number, results: Array.&lt;KVPair.&lt;string, TekstowoAPIArtistID&gt;&gt;}&gt;</code>
 
 <a name="new_TekstowoAPI_new"></a>
 
@@ -234,7 +236,7 @@ Downloads, parses lyrics page and extracts "metrics" section for specified argum
 
 <a name="TekstowoAPI+getArtistsSongList"></a>
 
-### tekstowoAPI.getArtistsSongList(artistId, options) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>
+### tekstowoAPI.getArtistsSongList(artistId, options) ⇒ <code>Promise.&lt;{pageCount: number, results: Array.&lt;KVPair.&lt;string, TekstowoAPIArtistID&gt;&gt;}&gt;</code>
 Downloads and parses artist song list
 
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
@@ -246,6 +248,19 @@ Downloads and parses artist song list
 | options.page | <code>number</code> | 
 | options.sortDir | <code>string</code> | 
 | options.sortMode | <code>string</code> | 
+
+<a name="KVPair"></a>
+
+## KVPair
+**Kind**: global class  
+<a name="new_KVPair_new"></a>
+
+### new KVPair(key, value)
+
+| Param | Type |
+| --- | --- |
+| key | <code>K</code> | 
+| value | <code>V</code> | 
 
 <a name="TekstowoAPIProxyMethods"></a>
 

@@ -421,7 +421,7 @@ class TekstowoAPI {
 	 * @param {number} options.page
 	 * @param {string} options.sortDir
 	 * @param {string} options.sortMode
-	 * @returns {Promise<Object.<string, TekstowoAPILyricsID>>}
+	 * @returns {Promise<{ pageCount: number, results: Array<KVPair<string, TekstowoAPIArtistID>> }>}
 	 */
 	async getArtistsSongList(artistId, options = {}) {
 		const { sortMode, sortDir, page } = options;
@@ -433,18 +433,32 @@ class TekstowoAPI {
 		const pageCount = await this.getPagesForSong(undefined, undefined, responseText);
 		const base = responseText.split('-lista">')[1].split("<!-- end right column -->")[0].replace(/\n/g, "").replace(/\t/g, "");
 		/**
-		 * @type {Object.<string, TekstowoAPILyricsID>}
+		 * @type {Array<KVPair<string, TekstowoAPIArtistID>>}
 		 */
-		const base2 = {};
+		const base2 = [];
 		const splitTarget = `<a href="/piosenka,`;
 		const extractedIds = getTextBetween(base, splitTarget, `.html" class="`);
 		for (let i = 0; i < extractedIds.length; i++) {
 			const element = extractedIds[i];
 			const name = base.split(splitTarget + element + `.html" class="title"title="`)[1].split(`">`)[0];
-			base2[name] = element;
+			base2.push(new KVPair(name, element));
 		}
 		// debugger;
-		return { pages: pageCount, results: base2 };
+		return { pageCount, results: base2 };
+	}
+}
+
+/**
+ * @template K, V
+ */
+class KVPair {
+	/**
+	 * @param {K} key
+	 * @param {V} value
+	 */
+	constructor(key, value) {
+		this.key = key;
+		this.value = value;
 	}
 }
 
