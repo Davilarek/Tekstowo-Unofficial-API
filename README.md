@@ -6,6 +6,7 @@ This API has been designed for both Node.JS and Browserside JS.
 - [x] Getting the lyrics
 - [x] Search
 - [x] Grabbing song metadata
+- [x] Artist's song list
 - [ ] Popular songs list
 - [ ] Popular artists list
 - [ ] Artist details

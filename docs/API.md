@@ -35,6 +35,10 @@
 ## Typedefs
 
 <dl>
+<dt><a href="#TekstowoAPILyricsID">TekstowoAPILyricsID</a> : <code>String</code></dt>
+<dd></dd>
+<dt><a href="#TekstowoAPIArtistID">TekstowoAPIArtistID</a> : <code>String</code></dt>
+<dd></dd>
 <dt><a href="#TekstowoAPILyricsMetadata">TekstowoAPILyricsMetadata</a></dt>
 <dd><p>just an Object</p>
 </dd>
@@ -102,6 +106,7 @@
     * [.getPagesForSong(artist, songName, skipFetch, from)](#TekstowoAPI+getPagesForSong) ⇒ <code>Promise.&lt;number&gt;</code>
     * [.getLyrics(artist, songName)](#TekstowoAPI+getLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * [.getMetadata(songIdOrHtml, useHTML)](#TekstowoAPI+getMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyricsMetadata\|null)&gt;</code>
+    * [.getArtistsSongList(artistId, options)](#TekstowoAPI+getArtistsSongList) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>
 
 <a name="new_TekstowoAPI_new"></a>
 
@@ -151,7 +156,7 @@ Downloads and parses lyrics page for specified arguments.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| songId | <code>TekstowoAPILyricsID</code> |  |
+| songId | [<code>TekstowoAPILyricsID</code>](#TekstowoAPILyricsID) |  |
 | options | <code>Object</code> | Options for extraction. Providing a boolean here is deprecated. |
 | options.withMetadata | <code>boolean</code> |  |
 | options.withVideoId | <code>boolean</code> |  |
@@ -224,8 +229,23 @@ Downloads, parses lyrics page and extracts "metrics" section for specified argum
 
 | Param | Type | Default |
 | --- | --- | --- |
-| songIdOrHtml | <code>TekstowoAPILyricsID</code> \| <code>string</code> |  | 
+| songIdOrHtml | [<code>TekstowoAPILyricsID</code>](#TekstowoAPILyricsID) \| <code>string</code> |  | 
 | useHTML | <code>Boolean</code> | <code>false</code> | 
+
+<a name="TekstowoAPI+getArtistsSongList"></a>
+
+### tekstowoAPI.getArtistsSongList(artistId, options) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>
+Downloads and parses artist song list
+
+**Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
+
+| Param | Type |
+| --- | --- |
+| artistId | [<code>TekstowoAPIArtistID</code>](#TekstowoAPIArtistID) | 
+| options | <code>Object</code> | 
+| options.page | <code>number</code> | 
+| options.sortDir | <code>string</code> | 
+| options.sortMode | <code>string</code> | 
 
 <a name="TekstowoAPIProxyMethods"></a>
 
@@ -320,6 +340,14 @@ Downloads, parses lyrics page and extracts "metrics" section for specified argum
 | start | <code>string</code> | 
 | end | <code>string</code> | 
 
+<a name="TekstowoAPILyricsID"></a>
+
+## TekstowoAPILyricsID : <code>String</code>
+**Kind**: global typedef  
+<a name="TekstowoAPIArtistID"></a>
+
+## TekstowoAPIArtistID : <code>String</code>
+**Kind**: global typedef  
 <a name="TekstowoAPILyricsMetadata"></a>
 
 ## TekstowoAPILyricsMetadata

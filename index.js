@@ -22,10 +22,18 @@ const TekstowoAPIProxyMethods = {
 };
 
 // eslint-disable-next-line no-unused-vars
-class TekstowoAPILyricsID extends String { }
+// class TekstowoAPILyricsID extends String { }
+
+/**
+ * @typedef {String} TekstowoAPILyricsID
+ */
 
 // eslint-disable-next-line no-unused-vars
-class TekstowoAPIArtistID extends String { }
+// class TekstowoAPIArtistID extends String { }
+
+/**
+ * @typedef {String} TekstowoAPIArtistID
+ */
 
 class TekstowoAPISearchResults {
 	/**
@@ -40,11 +48,36 @@ class TekstowoAPISearchResults {
 	}
 }
 
+const SortMode = {
+	get alphabetically() {
+		return "alfabetycznie";
+	},
+	get popular() {
+		return "popularne";
+	},
+	get best() {
+		return "najlepsze";
+	},
+	get date() {
+		return "data";
+	},
+};
+
+const SortDirection = {
+	get descending() {
+		return "malejaco";
+	},
+	get ascending() {
+		// eslint-disable-next-line no-inline-comments
+		return ""; // ascending is default (?)
+	},
+};
+
 const TekstowoAPIUrls = {
 	/**
 	 * @param {TekstowoAPILyricsID} id
 	 */
-	LYRICS: (id) => { return "https://www.tekstowo.pl/piosenka," + id + ".html"; },
+	LYRICS: (id) => { return `https://www.tekstowo.pl/piosenka,${id}.html`; },
 	SEARCH: (artist, title, page = 1) => {
 		let baseUrl = `https://www.tekstowo.pl/szukaj,`;
 		if (!artist)
@@ -57,6 +90,12 @@ const TekstowoAPIUrls = {
 		baseUrl += `tytul,` + title + ",";
 		baseUrl += "strona," + page;
 		return baseUrl + ".html";
+	},
+	/**
+	 * @param {TekstowoAPIArtistID} id
+	 */
+	ARTIST_SONGS: (id, sortMode = SortMode.alphabetically, sortDir = (sortMode == SortMode.alphabetically ? SortDirection.ascending : SortDirection.descending), page = 1) => {
+		return `https://www.tekstowo.pl/piosenki_artysty,${id},${sortMode},${sortDir},strona,${page}.html`;
 	},
 };
 
@@ -100,6 +139,11 @@ class TekstowoAPI {
 		 */
 		this.FetchImpl = FetchImpl;
 		this.proxyMetod = proxyMetod;
+
+		this.Sorting = {
+			SortMode,
+			SortDirection,
+		};
 	}
 	/**
 	 * Makes a request using TekstowoAPI#FetchImpl.
@@ -369,6 +413,38 @@ class TekstowoAPI {
 			return constructObject(names, infos);
 		};
 		return parse(metricsTable.replace(/\t/g, "").replace(/\n/g, ""));
+	}
+	/**
+	 * Downloads and parses artist song list
+	 * @param {TekstowoAPIArtistID} artistId
+	 * @param {Object} options
+	 * @param {number} options.page
+	 * @param {string} options.sortDir
+	 * @param {string} options.sortMode
+	 * @returns {Promise<Object.<string, TekstowoAPILyricsID>>}
+	 */
+	async getArtistsSongList(artistId, options = {}) {
+		const { sortMode, sortDir, page } = options;
+		const requestOptions = new TekstowoAPIRequestOptions(
+			this.proxyThisUrl(TekstowoAPIUrls.ARTIST_SONGS(artistId, sortMode, sortDir, page)), { method: "GET" },
+		);
+		const response = await this.makeRequest(requestOptions);
+		const responseText = unescapeJsonString(await response.text());
+		const pageCount = await this.getPagesForSong(undefined, undefined, responseText);
+		const base = responseText.split('-lista">')[1].split("<!-- end right column -->")[0].replace(/\n/g, "").replace(/\t/g, "");
+		/**
+		 * @type {Object.<string, TekstowoAPILyricsID>}
+		 */
+		const base2 = {};
+		const splitTarget = `<a href="/piosenka,`;
+		const extractedIds = getTextBetween(base, splitTarget, `.html" class="`);
+		for (let i = 0; i < extractedIds.length; i++) {
+			const element = extractedIds[i];
+			const name = base.split(splitTarget + element + `.html" class="title"title="`)[1].split(`">`)[0];
+			base2[name] = element;
+		}
+		// debugger;
+		return { pages: pageCount, results: base2 };
 	}
 }
 
