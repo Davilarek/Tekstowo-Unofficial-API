@@ -202,7 +202,12 @@ class TekstowoAPI {
 				? new URL("http://localhost/?" + responseText.split("//filmiki4.maxart.pl/tplayer3n/#")[1].split("\"")[0]).searchParams.get("videoId")
 				: null;
 		};
-		const videoId = withVideoId === true ? findVideoId() : null;
+		const findVideoId2 = () => {
+			return responseText.includes("//www.youtube.com/embed/")
+				? new URL("http://localhost/?videoId=" + responseText.split("//www.youtube.com/embed/")[1].split("\"")[0]).searchParams.get("videoId")
+				: null;
+		};
+		const videoId = withVideoId === true ? (findVideoId() ?? findVideoId2()) : null;
 		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId);
 	}
 	/**
