@@ -73,6 +73,20 @@ const SortDirection = {
 	},
 };
 
+/**
+ * @param {string} sortMode
+ */
+const AutomaticSortDirection = (sortMode) => {
+	if (sortMode === SortMode.alphabetically) {
+		return SortDirection.ascending;
+	}
+	if (sortMode === SortMode.date) {
+		// technically this is wrong but it's a workaround
+		return SortDirection.ascending;
+	}
+	return SortDirection.descending;
+};
+
 const TekstowoAPIUrls = {
 	/**
 	 * @param {TekstowoAPILyricsID} id
@@ -94,7 +108,7 @@ const TekstowoAPIUrls = {
 	/**
 	 * @param {TekstowoAPIArtistID} id
 	 */
-	ARTIST_SONGS: (id, sortMode = SortMode.alphabetically, sortDir = (sortMode == SortMode.alphabetically ? SortDirection.ascending : SortDirection.descending), page = 1) => {
+	ARTIST_SONGS: (id, sortMode = SortMode.alphabetically, sortDir = (AutomaticSortDirection(sortMode)), page = 1) => {
 		return `https://www.tekstowo.pl/piosenki_artysty,${id},${sortMode},${sortDir},strona,${page}.html`;
 	},
 };
