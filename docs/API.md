@@ -16,6 +16,8 @@
 ## Functions
 
 <dl>
+<dt><a href="#AutomaticSortDirection">AutomaticSortDirection(sortMode)</a></dt>
+<dd></dd>
 <dt><a href="#getDuplicates">getDuplicates(arr)</a> ⇒ <code>Array</code></dt>
 <dd></dd>
 <dt><a href="#constructObject">constructObject(keys, values)</a> ⇒ <code>Object</code></dt>
@@ -273,6 +275,15 @@ Downloads and parses artist song list
 | None | <code>number</code> | <code>0</code> | 
 | AllOrigins | <code>number</code> | <code>1</code> | 
 | SirJoshProxy | <code>number</code> | <code>2</code> | 
+
+<a name="AutomaticSortDirection"></a>
+
+## AutomaticSortDirection(sortMode)
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| sortMode | <code>string</code> | 
 
 <a name="getDuplicates"></a>
 
