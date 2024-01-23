@@ -73,6 +73,21 @@ const SortDirection = {
 	},
 };
 
+const Months = [
+	"stycznia",
+	"lutego",
+	"marca",
+	"kwietnia",
+	"maja",
+	"czerwca",
+	"lipca",
+	"sierpnia",
+	"września",
+	"października",
+	"listopada",
+	"grudnia",
+];
+
 /**
  * @param {string} sortMode
  */
@@ -110,6 +125,11 @@ const TekstowoAPIUrls = {
 	 */
 	ARTIST_SONGS: (id, sortMode = SortMode.alphabetically, sortDir = (AutomaticSortDirection(sortMode)), page = 1) => {
 		return `https://www.tekstowo.pl/piosenki_artysty,${id},${sortMode},${sortDir},strona,${page}.html`;
+	},
+	__TEKSTOWO_OFFICIAL_API_USE_RARELY: {
+		MORE_COMMENTS: (internalSongId, offset = 0) => {
+			return `https://www.tekstowo.pl/js,moreComments,S,${internalSongId},${offset}`;
+		},
 	},
 };
 
@@ -468,6 +488,71 @@ class TekstowoAPI {
 		// debugger;
 		return { pageCount, results: base2 };
 	}
+	async requestComments(internalSongId, offset = 0) {
+		const requestOptions = new TekstowoAPIRequestOptions(
+			this.proxyThisUrl(TekstowoAPIUrls.__TEKSTOWO_OFFICIAL_API_USE_RARELY.MORE_COMMENTS(internalSongId, offset)), { method: "GET" },
+		);
+		const response = await this.makeRequest(requestOptions);
+		const responseText = unescapeJsonString(await response.text());
+		return parseComments(responseText);
+	}
+}
+
+/**
+ * @param {string} input
+ */
+function parseDate(input) {
+	const spaceSplitted = input.trim().split(" ");
+	const [day, monthName, year, time] = spaceSplitted;
+	return new Date(year, Months.indexOf(monthName), day, time.split(":")[0], time.split(":")[1]);
+}
+
+/**
+ * @param {string} htmlString
+ */
+function parseComments(htmlString) {
+	const commentMatches = htmlString.split(`<div class="row komentarz ">`);
+	const parsedComments = [];
+
+	// for (const commentMatch of commentMatches) {
+	for (let index = 0; index < commentMatches.length; index++) {
+		const commentHTML = commentMatches[index];
+		// console.log(element);
+		if (!commentHTML.trimStart().startsWith("<div"))
+			continue;
+		const commentIdMatch = /comment-(\d+)/.exec(commentHTML);
+		const commentId = commentIdMatch ? commentIdMatch[1] : '';
+
+		const usernameMatch = /<strong>(.*?)<\/strong>/s.exec(commentHTML);
+		const username = usernameMatch ? usernameMatch[1].trim() : '';
+
+		const userProfilePathMatch = /<a\s+href="(\/profil,[^"]+)"/.exec(commentHTML);
+		const userProfilePath = userProfilePathMatch ? userProfilePathMatch[1] : '';
+
+		// eslint-disable-next-line no-inline-comments
+		const commentTextMatch = /<div class=" " id="comment-\d+">(.*?)<\/div>/s.exec(commentHTML); // I hope this won't break any soon
+		const commentText = commentTextMatch ? commentTextMatch[1].trim().replace(/\n/g, '').replace(/<br \/>/g, '\n') : '';
+
+		const date = parseDate(commentHTML.split("</strong></a>")[1].split("<div")[0]);
+
+		const scoreMatch = /<span id="crank(\d+)">\(([^)]+)\)<\/span>/.exec(commentHTML);
+		const score = scoreMatch ? scoreMatch[2] : '';
+
+		const parentCommentIdMatch = /ajxShowParent\(this,(\d+)\)/.exec(commentHTML);
+		const parentCommentId = parentCommentIdMatch ? parentCommentIdMatch[1] : '';
+
+		parsedComments.push({
+			username,
+			userProfilePath,
+			commentText,
+			date,
+			score,
+			parentCommentId,
+			commentId,
+		});
+	}
+
+	return parsedComments;
 }
 
 /**
