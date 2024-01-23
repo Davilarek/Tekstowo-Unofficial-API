@@ -18,6 +18,10 @@
 <dl>
 <dt><a href="#AutomaticSortDirection">AutomaticSortDirection(sortMode)</a></dt>
 <dd></dd>
+<dt><a href="#parseDate">parseDate(input)</a></dt>
+<dd></dd>
+<dt><a href="#parseComments">parseComments(htmlString)</a></dt>
+<dd></dd>
 <dt><a href="#getDuplicates">getDuplicates(arr)</a> ⇒ <code>Array</code></dt>
 <dd></dd>
 <dt><a href="#constructObject">constructObject(keys, values)</a> ⇒ <code>Object</code></dt>
@@ -284,6 +288,24 @@ Downloads and parses artist song list
 | Param | Type |
 | --- | --- |
 | sortMode | <code>string</code> | 
+
+<a name="parseDate"></a>
+
+## parseDate(input)
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| input | <code>string</code> | 
+
+<a name="parseComments"></a>
+
+## parseComments(htmlString)
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| htmlString | <code>string</code> | 
 
 <a name="getDuplicates"></a>
 
