@@ -120,7 +120,7 @@ class TekstowoAPILyrics {
 	 * @param {{}} metadata
 	 * @param {string} lyricsName
 	 */
-	constructor(original, translated, metadata, lyricsName, video) {
+	constructor(original, translated, metadata, lyricsName, video, internalId) {
 		this.original = original;
 		this.translated = translated;
 		// eslint-disable-next-line no-inline-comments
@@ -131,6 +131,8 @@ class TekstowoAPILyrics {
 			this.lyricsName = lyricsName;
 		if (video)
 			this.videoId = video;
+		if (internalId)
+			this.internalId = internalId;
 	}
 }
 
@@ -222,7 +224,8 @@ class TekstowoAPI {
 				: null;
 		};
 		const videoId = withVideoId === true ? (findVideoId() ?? findVideoId2()) : null;
-		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId);
+		const internalId = responseText.split("ajxRankSong('Up',")[1].split(")")[0];
+		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId, internalId);
 	}
 	/**
 	 * Downloads and parses search result page for specified arguments.
