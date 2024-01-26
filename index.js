@@ -139,8 +139,11 @@ class TekstowoAPILyrics {
 	 * @param {string} translated
 	 * @param {{}} metadata
 	 * @param {string} lyricsName
+	 * @param {string} internalId ID used by vote system or comments
+	 * @param {string} video YouTube video ID
+	 * @param {boolean} [aiGeneratedTranslation=false] Is the translation made by AI?
 	 */
-	constructor(original, translated, metadata, lyricsName, video, internalId) {
+	constructor(original, translated, metadata, lyricsName, video, internalId, aiGeneratedTranslation = false) {
 		this.original = original;
 		this.translated = translated;
 		// eslint-disable-next-line no-inline-comments
@@ -153,6 +156,7 @@ class TekstowoAPILyrics {
 			this.videoId = video;
 		if (internalId)
 			this.internalId = internalId;
+		this.aiGeneratedTranslation = aiGeneratedTranslation;
 	}
 }
 
@@ -230,7 +234,41 @@ class TekstowoAPI {
 		// const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\r/g, '').replace(/\n{2,}/g, '\n');
 		const lyricsNormal = (responseText.split(`inner-text">`)[1].split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
 		// const lyricsTranslated = (responseText.split(`inner-text">`)[2].split("</div>")[0].replace(/<br \/>/g, '\n')).replace(/\r/g, '').replace(/\n{2,}/g, '\n');
-		const lyricsTranslated = ((responseText.split(`inner-text">`)[2] ?? responseText.split(`inner-text ">`)[1]).split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
+		// eslint-disable-next-line no-inline-comments
+		const aiGeneratedTranslation = responseText.includes("inner-text auto-translation"); // should not be hardcoded here, TODO
+		const extractTranslation = () => {
+			const translationSources = [
+				{
+					str: `inner-text">`,
+					indx: 2,
+				},
+				{
+					str: `inner-text ">`,
+					indx: 1,
+				},
+				{
+					str: `inner-text auto-translation">`,
+					indx: 1,
+				},
+			];
+			const applyMod = x => {
+				return x.split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n');
+			};
+			let target = null;
+			let curr = 0;
+			// eslint-disable-next-line no-constant-condition
+			while (true) {
+				if (curr >= translationSources.length)
+					break;
+				target = responseText.split(translationSources[curr].str)[translationSources[curr].indx];
+				if (target != undefined)
+					return applyMod(target);
+				curr++;
+			}
+			return "Translation search failed";
+		};
+		// const lyricsTranslated = ((responseText.split(`inner-text">`)[2] ?? responseText.split(`inner-text ">`)[1]).split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
+		const lyricsTranslated = extractTranslation().replace(/\r/g, '');
 		const parsedName = responseText.split('<h1 ')[1].split("</h1>")[0].split(`">`)[1];
 		const metaData = withMetadata === true ? await this.getMetadata(responseText, true) : undefined;
 		const findVideoId = () => {
@@ -245,7 +283,7 @@ class TekstowoAPI {
 		};
 		const videoId = withVideoId === true ? (findVideoId() ?? findVideoId2()) : null;
 		const internalId = responseText.split("ajxRankSong('Up',")[1].split(")")[0];
-		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId, internalId);
+		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId, internalId, aiGeneratedTranslation);
 	}
 	/**
 	 * Downloads and parses search result page for specified arguments.
