@@ -107,16 +107,9 @@ const TekstowoAPIUrls = {
 	 * @param {TekstowoAPILyricsID} id
 	 */
 	LYRICS: (id) => { return `https://www.tekstowo.pl/piosenka,${id}.html`; },
-	SEARCH: (artist, title, page = 1) => {
+	SEARCH: (query, page = 1) => {
 		let baseUrl = `https://www.tekstowo.pl/szukaj,`;
-		if (!artist)
-			artist = "";
-		if (!title)
-			title = "";
-		// if (artist)
-		baseUrl += `wykonawca,` + artist + ",";
-		// if (title)
-		baseUrl += `tytul,` + title + ",";
+		baseUrl += query + ",";
 		baseUrl += "strona," + page;
 		return baseUrl + ".html";
 	},
@@ -139,8 +132,8 @@ class TekstowoAPILyrics {
 	 * @param {string} translated
 	 * @param {{}} metadata
 	 * @param {string} lyricsName
-	 * @param {string} internalId ID used by vote system or comments
 	 * @param {string} video YouTube video ID
+	 * @param {string} internalId ID used by vote system or comments
 	 * @param {boolean} [aiGeneratedTranslation=false] Is the translation made by AI?
 	 */
 	constructor(original, translated, metadata, lyricsName, video, internalId, aiGeneratedTranslation = false) {
@@ -332,7 +325,13 @@ class TekstowoAPI {
 	 * @param {boolean} options.onlySongs If true, skips extracting artists and returns only song list.
 	 * @returns {Promise<Object.<string, TekstowoAPILyricsID | TekstowoAPIArtistID> | TekstowoAPISearchResults>}
 	 */
-	async search(artist = "", songName = "", options) {
+	async search(query = "", options, legacyOptions) {
+		if (typeof options == "string") {
+			const old_ = options;
+			options = legacyOptions;
+			// eslint-disable-next-line no-unused-vars
+			query += "+" + old_;
+		}
 		const { page, includePageCount, onlySongs, onlyArtists } = options;
 
 		if (onlyArtists === true && onlySongs === true)
@@ -340,18 +339,18 @@ class TekstowoAPI {
 
 		/* basic stuff */
 		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName, page)), { method: "GET" },
+			this.proxyThisUrl(TekstowoAPIUrls.SEARCH(query, page)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
 		// const baseForScrapping = responseText.split(`:</h2>`)[1].split(`<h2 class="`)[0];
 		const baseForScrapping = responseText.split(`:</h2>`);
 		// const songsNum = 1;
-		const rawSongs = songName == "" ? "" : baseForScrapping[1].split("`<h2 class=")[0];
-		const rawArtists = artist == "" ? "" : baseForScrapping[songName == "" ? 1 : 2].split(`<nav`)[0];
+		const rawSongs = baseForScrapping[1].split("`<h2 class=")[0].replace(/\n/g, "").replace(/ {4,}/g, ' ');
+		const rawArtists = baseForScrapping.length <= 2 ? "" : baseForScrapping[2].split(`<nav`)[0].replace(/\n/g, "").replace(/ {4,}/g, ' ');
 		const returnVal = new TekstowoAPISearchResults();
 		if (includePageCount === true)
-			returnVal.pageCount = await this.getPagesForSong(artist, songName, responseText);
+			returnVal.pageCount = await this.getPagesForQuery(query, responseText);
 		// debugger;
 		const extractSongsList = async () => {
 			/**
@@ -396,6 +395,12 @@ class TekstowoAPI {
 		}
 	}
 	/**
+	 * @deprecated Use getPagesForQuery
+	 */
+	async getPagesForSong(artist, songName, skipFetch = "", from = 1) {
+		return this.getPagesForQuery(`${artist}+${songName}`, skipFetch, from);
+	}
+	/**
 	 * Downloads and parses search result page and extracts pages count for specified arguments.
 	 * Alternatively, if skipFetch is not empty (""), re-fetching will be skipped and it will use the supplied HTML string.
 	 * @param {string} artist
@@ -404,10 +409,10 @@ class TekstowoAPI {
 	 * @param {number} from Debug only, don't use
 	 * @returns {Promise<number>}
 	 */
-	async getPagesForSong(artist, songName, skipFetch = "", from = 1) {
+	async getPagesForQuery(query, skipFetch = "", from = 1) {
 		if (skipFetch == "") {
 			const requestOptions = new TekstowoAPIRequestOptions(
-				this.proxyThisUrl(TekstowoAPIUrls.SEARCH(artist, songName, from)), { method: "GET" },
+				this.proxyThisUrl(TekstowoAPIUrls.SEARCH(query, from)), { method: "GET" },
 			);
 			const response = await this.makeRequest(requestOptions);
 			skipFetch = unescapeJsonString(await response.text());
@@ -510,7 +515,7 @@ class TekstowoAPI {
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
-		const pageCount = await this.getPagesForSong(undefined, undefined, responseText);
+		const pageCount = await this.getPagesForQuery(undefined, undefined, responseText);
 		const base = responseText.split('-lista">')[1].split("<!-- end right column -->")[0].replace(/\n/g, "").replace(/\t/g, "");
 		/**
 		 * @type {Array<KVPair<string, TekstowoAPIArtistID>>}
