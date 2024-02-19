@@ -515,7 +515,7 @@ class TekstowoAPI {
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
-		const pageCount = await this.getPagesForQuery(undefined, undefined, responseText);
+		const pageCount = await this.getPagesForQuery(undefined, responseText);
 		const base = responseText.split('-lista">')[1].split("<!-- end right column -->")[0].replace(/\n/g, "").replace(/\t/g, "");
 		/**
 		 * @type {Array<KVPair<string, TekstowoAPIArtistID>>}
