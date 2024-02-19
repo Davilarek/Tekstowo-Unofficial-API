@@ -89,14 +89,17 @@
 **Kind**: global class  
 <a name="new_TekstowoAPILyrics_new"></a>
 
-### new TekstowoAPILyrics(original, translated, metadata, lyricsName)
+### new TekstowoAPILyrics(original, translated, metadata, lyricsName, video, internalId, [aiGeneratedTranslation])
 
-| Param | Type |
-| --- | --- |
-| original | <code>string</code> | 
-| translated | <code>string</code> | 
-| metadata | <code>Object</code> | 
-| lyricsName | <code>string</code> | 
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| original | <code>string</code> |  |  |
+| translated | <code>string</code> |  |  |
+| metadata | <code>Object</code> |  |  |
+| lyricsName | <code>string</code> |  |  |
+| video | <code>string</code> |  | YouTube video ID |
+| internalId | <code>string</code> |  | ID used by vote system or comments |
+| [aiGeneratedTranslation] | <code>boolean</code> | <code>false</code> | Is the translation made by AI? |
 
 <a name="TekstowoAPI"></a>
 
@@ -110,8 +113,9 @@
     * [.proxyThisUrl(url)](#TekstowoAPI+proxyThisUrl) ⇒ <code>string</code>
     * [.extractLyrics(songId, options)](#TekstowoAPI+extractLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * ~~[.searchLyrics(artist, songName, page, includePageCount)](#TekstowoAPI+searchLyrics) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>~~
-    * [.search(artist, songName, options)](#TekstowoAPI+search) ⇒ <code>Promise.&lt;(Object.&lt;string, (TekstowoAPILyricsID\|TekstowoAPIArtistID)&gt;\|TekstowoAPISearchResults)&gt;</code>
-    * [.getPagesForSong(artist, songName, skipFetch, from)](#TekstowoAPI+getPagesForSong) ⇒ <code>Promise.&lt;number&gt;</code>
+    * [.search(query, options)](#TekstowoAPI+search) ⇒ <code>Promise.&lt;(Object.&lt;string, (TekstowoAPILyricsID\|TekstowoAPIArtistID)&gt;\|TekstowoAPISearchResults)&gt;</code>
+    * ~~[.getPagesForSong()](#TekstowoAPI+getPagesForSong)~~
+    * [.getPagesForQuery(query, skipFetch, from)](#TekstowoAPI+getPagesForQuery) ⇒ <code>Promise.&lt;number&gt;</code>
     * [.getLyrics(artist, songName)](#TekstowoAPI+getLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * [.getMetadata(songIdOrHtml, useHTML)](#TekstowoAPI+getMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyricsMetadata\|null)&gt;</code>
     * [.getArtistsSongList(artistId, options)](#TekstowoAPI+getArtistsSongList) ⇒ <code>Promise.&lt;{pageCount: number, results: Array.&lt;KVPair.&lt;string, TekstowoAPIArtistID&gt;&gt;}&gt;</code>
@@ -187,15 +191,14 @@ Downloads and parses search result page for specified arguments.
 
 <a name="TekstowoAPI+search"></a>
 
-### tekstowoAPI.search(artist, songName, options) ⇒ <code>Promise.&lt;(Object.&lt;string, (TekstowoAPILyricsID\|TekstowoAPIArtistID)&gt;\|TekstowoAPISearchResults)&gt;</code>
+### tekstowoAPI.search(query, options) ⇒ <code>Promise.&lt;(Object.&lt;string, (TekstowoAPILyricsID\|TekstowoAPIArtistID)&gt;\|TekstowoAPISearchResults)&gt;</code>
 Downloads and parses search result page for specified arguments.
 
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| artist | <code>string</code> |  |
-| songName | <code>string</code> |  |
+| query | <code>string</code> |  |
 | options | <code>Object</code> |  |
 | options.page | <code>number</code> |  |
 | options.includePageCount | <code>boolean</code> | If `onlyArtists` or `onlySongs` is true, adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong. If not, sets the `pageCount` property of TekstowoAPISearchResults. |
@@ -204,15 +207,20 @@ Downloads and parses search result page for specified arguments.
 
 <a name="TekstowoAPI+getPagesForSong"></a>
 
-### tekstowoAPI.getPagesForSong(artist, songName, skipFetch, from) ⇒ <code>Promise.&lt;number&gt;</code>
+### ~~tekstowoAPI.getPagesForSong()~~
+***Deprecated***
+
+**Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
+<a name="TekstowoAPI+getPagesForQuery"></a>
+
+### tekstowoAPI.getPagesForQuery(query, skipFetch, from) ⇒ <code>Promise.&lt;number&gt;</code>
 Downloads and parses search result page and extracts pages count for specified arguments.Alternatively, if skipFetch is not empty (""), re-fetching will be skipped and it will use the supplied HTML string.
 
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| artist | <code>string</code> |  |  |
-| songName | <code>string</code> |  |  |
+| query | <code>string</code> |  |  |
 | skipFetch | <code>string</code> |  |  |
 | from | <code>number</code> | <code>1</code> | Debug only, don't use |
 

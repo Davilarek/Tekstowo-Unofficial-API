@@ -316,8 +316,7 @@ class TekstowoAPI {
 	}
 	/**
 	 * Downloads and parses search result page for specified arguments.
-	 * @param {string} artist
-	 * @param {string} songName
+	 * @param {string} query
 	 * @param {Object} options
 	 * @param {number} options.page
 	 * @param {boolean} options.includePageCount If `onlyArtists` or `onlySongs` is true, adds undocumented property, "INTERNAL_PAGE_COUNT" (not-enumerable) with value returned by TekstowoAPI#getPagesForSong. If not, sets the `pageCount` property of TekstowoAPISearchResults.
@@ -403,8 +402,7 @@ class TekstowoAPI {
 	/**
 	 * Downloads and parses search result page and extracts pages count for specified arguments.
 	 * Alternatively, if skipFetch is not empty (""), re-fetching will be skipped and it will use the supplied HTML string.
-	 * @param {string} artist
-	 * @param {string} songName
+	 * @param {string} query
 	 * @param {string} skipFetch
 	 * @param {number} from Debug only, don't use
 	 * @returns {Promise<number>}
