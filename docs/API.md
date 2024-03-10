@@ -89,7 +89,7 @@
 **Kind**: global class  
 <a name="new_TekstowoAPILyrics_new"></a>
 
-### new TekstowoAPILyrics(original, translated, metadata, lyricsName, video, internalId, [aiGeneratedTranslation])
+### new TekstowoAPILyrics(original, translated, metadata, lyricsName, video, internalId, [aiGeneratedTranslation], commentCount)
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -100,6 +100,7 @@
 | video | <code>string</code> |  | YouTube video ID |
 | internalId | <code>string</code> |  | ID used by vote system or comments |
 | [aiGeneratedTranslation] | <code>boolean</code> | <code>false</code> | Is the translation made by AI? |
+| commentCount | <code>number</code> \| <code>undefined</code> |  | How many comments are on this lyrics page? |
 
 <a name="TekstowoAPI"></a>
 

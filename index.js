@@ -135,8 +135,9 @@ class TekstowoAPILyrics {
 	 * @param {string} video YouTube video ID
 	 * @param {string} internalId ID used by vote system or comments
 	 * @param {boolean} [aiGeneratedTranslation=false] Is the translation made by AI?
+	 * @param {number | undefined} commentCount How many comments are on this lyrics page?
 	 */
-	constructor(original, translated, metadata, lyricsName, video, internalId, aiGeneratedTranslation = false) {
+	constructor(original, translated, metadata, lyricsName, video, internalId, aiGeneratedTranslation = false, commentCount) {
 		this.original = original;
 		this.translated = translated;
 		// eslint-disable-next-line no-inline-comments
@@ -150,6 +151,7 @@ class TekstowoAPILyrics {
 		if (internalId)
 			this.internalId = internalId;
 		this.aiGeneratedTranslation = aiGeneratedTranslation;
+		this.commentCount = commentCount;
 	}
 }
 
@@ -276,7 +278,8 @@ class TekstowoAPI {
 		};
 		const videoId = withVideoId === true ? (findVideoId() ?? findVideoId2()) : null;
 		const internalId = responseText.split("ajxRankSong('Up',")[1].split(")")[0];
-		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId, internalId, aiGeneratedTranslation);
+		const commentCount = responseText.includes("Komentarze (") ? responseText.split("Komentarze (")[1].split("):")[0] : undefined;
+		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId, internalId, aiGeneratedTranslation, commentCount);
 	}
 	/**
 	 * Downloads and parses search result page for specified arguments.
