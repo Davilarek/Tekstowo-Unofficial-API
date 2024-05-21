@@ -110,6 +110,7 @@
 * [TekstowoAPI](#TekstowoAPI)
     * [new TekstowoAPI(FetchImpl, proxyMetod)](#new_TekstowoAPI_new)
     * [.FetchImpl](#TekstowoAPI+FetchImpl) : <code>fetch</code>
+    * [.ConstantURLPaths](#TekstowoAPI+ConstantURLPaths) : <code>ConstantURLPaths</code>
     * [.makeRequest(options)](#TekstowoAPI+makeRequest) ⇒ <code>Promise.&lt;Response&gt;</code>
     * [.proxyThisUrl(url)](#TekstowoAPI+proxyThisUrl) ⇒ <code>string</code>
     * [.extractLyrics(songId, options)](#TekstowoAPI+extractLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
@@ -135,6 +136,10 @@ Creates a new TekstowoAPI instance
 <a name="TekstowoAPI+FetchImpl"></a>
 
 ### tekstowoAPI.FetchImpl : <code>fetch</code>
+**Kind**: instance property of [<code>TekstowoAPI</code>](#TekstowoAPI)  
+<a name="TekstowoAPI+ConstantURLPaths"></a>
+
+### tekstowoAPI.ConstantURLPaths : <code>ConstantURLPaths</code>
 **Kind**: instance property of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 <a name="TekstowoAPI+makeRequest"></a>
 

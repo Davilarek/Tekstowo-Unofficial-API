@@ -102,13 +102,19 @@ const AutomaticSortDirection = (sortMode) => {
 	return SortDirection.descending;
 };
 
+const ConstantURLPaths = {
+	song: "piosenka",
+	search: "szukaj",
+	artistSongs: "piosenki_artysty",
+};
+
 const TekstowoAPIUrls = {
 	/**
 	 * @param {TekstowoAPILyricsID} id
 	 */
-	LYRICS: (id) => { return `https://www.tekstowo.pl/piosenka,${id}.html`; },
+	LYRICS: (id) => { return `https://www.tekstowo.pl/${ConstantURLPaths.song},${id}.html`; },
 	SEARCH: (query, page = 1) => {
-		let baseUrl = `https://www.tekstowo.pl/szukaj,`;
+		let baseUrl = `https://www.tekstowo.pl/${ConstantURLPaths.search},`;
 		baseUrl += query + ",";
 		baseUrl += "strona," + page;
 		return baseUrl + ".html";
@@ -117,7 +123,7 @@ const TekstowoAPIUrls = {
 	 * @param {TekstowoAPIArtistID} id
 	 */
 	ARTIST_SONGS: (id, sortMode = SortMode.alphabetically, sortDir = (AutomaticSortDirection(sortMode)), page = 1) => {
-		return `https://www.tekstowo.pl/piosenki_artysty,${id},${sortMode},${sortDir},strona,${page}.html`;
+		return `https://www.tekstowo.pl/${ConstantURLPaths.artistSongs},${id},${sortMode},${sortDir},strona,${page}.html`;
 	},
 	__TEKSTOWO_OFFICIAL_API_USE_RARELY: {
 		MORE_COMMENTS: (internalSongId, offset = 0) => {
@@ -179,6 +185,15 @@ class TekstowoAPI {
 			SortMode,
 			SortDirection,
 		};
+		/**
+		 * @type {ConstantURLPaths}
+		 */
+		this.ConstantURLPaths = null;
+		Object.defineProperty(this, "ConstantURLPaths", {
+			get() {
+				return ConstantURLPaths;
+			},
+		});
 	}
 	/**
 	 * Makes a request using TekstowoAPI#FetchImpl.
@@ -359,7 +374,7 @@ class TekstowoAPI {
 			 * @type {Object.<string, TekstowoAPILyricsID>}
 			 */
 			const base2 = {};
-			const splitTarget = `<a href="/piosenka,`;
+			const splitTarget = `<a href="/${ConstantURLPaths.song},`;
 			const extractedIds = getTextBetween(rawSongs, splitTarget, `.html" class="`);
 			for (let i = 0; i < extractedIds.length; i++) {
 				const element = extractedIds[i];
@@ -375,7 +390,7 @@ class TekstowoAPI {
 			 * @type {Object.<string, TekstowoAPIArtistID>}
 			 */
 			const base2 = {};
-			const splitTarget = `<a href="/piosenki_artysty,`;
+			const splitTarget = `<a href="/${ConstantURLPaths.artistSongs},`;
 			const extractedIds = getTextBetween(rawArtists, splitTarget, `.html" class="`);
 			for (let i = 0; i < extractedIds.length; i++) {
 				const element = extractedIds[i];
@@ -522,7 +537,7 @@ class TekstowoAPI {
 		 * @type {Array<KVPair<string, TekstowoAPIArtistID>>}
 		 */
 		const base2 = [];
-		const splitTarget = `<a href="/piosenka,`;
+		const splitTarget = `<a href="/${ConstantURLPaths.song},`;
 		const extractedIds = getTextBetween(base, splitTarget, `.html" class="`);
 		for (let i = 0; i < extractedIds.length; i++) {
 			const element = extractedIds[i];
