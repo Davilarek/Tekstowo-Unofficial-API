@@ -125,6 +125,7 @@ const ConstantURLPaths = {
 	song: "piosenka",
 	search: "szukaj",
 	artistSongs: "piosenki_artysty",
+	artistProfile: "wykonawca",
 };
 
 const TekstowoAPIUrls = {
@@ -148,7 +149,7 @@ const TekstowoAPIUrls = {
 	 * @param {TekstowoAPIArtistID} id
 	 */
 	ARTIST_PROFILE: (id) => {
-		return `https://www.tekstowo.pl/wykonawca,${id}.html`;
+		return `https://www.tekstowo.pl/${ConstantURLPaths.artistProfile},${id}.html`;
 	},
 	__TEKSTOWO_OFFICIAL_API_USE_RARELY: {
 		MORE_COMMENTS: (internalId, offset = 0, mode = 'S') => {
