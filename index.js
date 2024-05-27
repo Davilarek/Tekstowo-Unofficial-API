@@ -54,7 +54,7 @@ class TekstowoAPIArtistProfile {
 	 * @param {string} artistDescription
 	 * @param {Array<{ hd: string, small: string }>} images
 	 * @param {Array<{ year: number, name: string }>} discography
-	 * @param {number | undefined} comments
+	 * @param {number | undefined} commentCount
 	 * @param {string | undefined} internalId
 	 */
 	constructor(displayName, artistDescription, images, discography, commentCount, internalId) {

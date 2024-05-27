@@ -91,7 +91,7 @@
 **Kind**: global class  
 <a name="new_TekstowoAPIArtistProfile_new"></a>
 
-### new TekstowoAPIArtistProfile(displayName, artistDescription, images, discography, comments, internalId)
+### new TekstowoAPIArtistProfile(displayName, artistDescription, images, discography, commentCount, internalId)
 
 | Param | Type |
 | --- | --- |
@@ -99,7 +99,7 @@
 | artistDescription | <code>string</code> | 
 | images | <code>Array.&lt;{hd: string, small: string}&gt;</code> | 
 | discography | <code>Array.&lt;{year: number, name: string}&gt;</code> | 
-| comments | <code>number</code> \| <code>undefined</code> | 
+| commentCount | <code>number</code> \| <code>undefined</code> | 
 | internalId | <code>string</code> \| <code>undefined</code> | 
 
 <a name="TekstowoAPILyrics"></a>
