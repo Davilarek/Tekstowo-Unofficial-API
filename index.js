@@ -48,6 +48,25 @@ class TekstowoAPISearchResults {
 	}
 }
 
+class TekstowoAPIArtistProfile {
+	/**
+	 * @param {string} displayName
+	 * @param {string} artistDescription
+	 * @param {Array<{ hd: string, small: string }>} images
+	 * @param {Array<{ year: number, name: string }>} discography
+	 * @param {number | undefined} comments
+	 * @param {string | undefined} internalId
+	 */
+	constructor(displayName, artistDescription, images, discography, commentCount, internalId) {
+		this.displayName = displayName;
+		this.artistDescription = artistDescription;
+		this.images = images;
+		this.discography = discography;
+		this.commentCount = commentCount;
+		this.internalId = internalId;
+	}
+}
+
 const SortMode = {
 	get alphabetically() {
 		return "alfabetycznie";
@@ -125,9 +144,15 @@ const TekstowoAPIUrls = {
 	ARTIST_SONGS: (id, sortMode = SortMode.alphabetically, sortDir = (AutomaticSortDirection(sortMode)), page = 1) => {
 		return `https://www.tekstowo.pl/${ConstantURLPaths.artistSongs},${id},${sortMode},${sortDir},strona,${page}.html`;
 	},
+	/**
+	 * @param {TekstowoAPIArtistID} id
+	 */
+	ARTIST_PROFILE: (id) => {
+		return `https://www.tekstowo.pl/wykonawca,${id}.html`;
+	},
 	__TEKSTOWO_OFFICIAL_API_USE_RARELY: {
-		MORE_COMMENTS: (internalSongId, offset = 0) => {
-			return `https://www.tekstowo.pl/js,moreComments,S,${internalSongId},${offset}`;
+		MORE_COMMENTS: (internalId, offset = 0, mode = 'S') => {
+			return `https://www.tekstowo.pl/js,moreComments,${mode},${internalId},${offset}`;
 		},
 	},
 };
@@ -547,13 +572,43 @@ class TekstowoAPI {
 		// debugger;
 		return { pageCount, results: base2 };
 	}
-	async requestComments(internalSongId, offset = 0) {
+	/**
+	 * @param {string} internalId The post id we are pulling comments for. Can be song id, artist id.
+	 * @param {*} offset How many comments have we already acknowledged?
+	 * @param {*} mode What type is the post? 'S' for songs, 'A' for artists.
+	 */
+	async requestComments(internalId, offset = 0, mode = 'S') {
 		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.__TEKSTOWO_OFFICIAL_API_USE_RARELY.MORE_COMMENTS(internalSongId, offset)), { method: "GET" },
+			this.proxyThisUrl(TekstowoAPIUrls.__TEKSTOWO_OFFICIAL_API_USE_RARELY.MORE_COMMENTS(internalId, offset, mode)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
 		return parseComments(responseText);
+	}
+	async getArtistProfile(artistId) {
+		const requestOptions = new TekstowoAPIRequestOptions(
+			this.proxyThisUrl(TekstowoAPIUrls.ARTIST_PROFILE(artistId)), { method: "GET" },
+		);
+		const response = await this.makeRequest(requestOptions);
+		const responseText = unescapeJsonString(await response.text());
+		const displayName = responseText.matchAll(/<div\sclass=".*?">\s+?<strong>(.*?)<\/strong>\s+?<\/div>/g);
+		const artistDescription = (responseText.split(`by="opis-tab">`)[1].split("</div>")[0].replace(/\n/g, '').replace(/<br \/>/g, '\n')).replace(/\r/g, '');
+		const artistDescriptionMoreMod = artistDescription.replace(/\t/g, '').trim();
+		const artistDiscography = getTextBetween(responseText.split(`by="dyskografia-tab">`)[1].split("</div>")[0], "<p>", "</p>").map(x => {
+			const base = x.match(/\d+?\.&nbsp;<b>(.*?)<\/b>\s*?\((\d+)\)/);
+			return { year: parseInt(base[2]), name: base[1] };
+		});
+		const artistMainPhoto = responseText.split(`id="main_art_photo" src="`)[1].split("\"")[0];
+		const artistPhotosRegex = /data-lightbox="artist" href="(\/.*?)"><img\s*?src="(\/.*?)"/g;
+		const artistPhotosRegexMatches = responseText.matchAll(artistPhotosRegex);
+		const artistPhotosResults = [];
+		for (const match of artistPhotosRegexMatches) {
+			artistPhotosResults.push({ hd: match[1], small: match[2] });
+		}
+		const commentCount = responseText.includes("Komentarze (") ? responseText.split("Komentarze (")[1].split("):")[0] : undefined;
+		const artistInternalId = responseText.includes("ajxShowMoreComments") ? responseText.split("ajxShowMoreComments('A',")[1].split(")")[0] : undefined;
+		const result = new TekstowoAPIArtistProfile(displayName.next().value[1], artistDescriptionMoreMod, [{ hd: artistMainPhoto, small: artistMainPhoto }, ...artistPhotosResults], artistDiscography, commentCount, artistInternalId);
+		return result;
 	}
 }
 

@@ -5,6 +5,8 @@
 <dd></dd>
 <dt><a href="#TekstowoAPISearchResults">TekstowoAPISearchResults</a></dt>
 <dd></dd>
+<dt><a href="#TekstowoAPIArtistProfile">TekstowoAPIArtistProfile</a></dt>
+<dd></dd>
 <dt><a href="#TekstowoAPILyrics">TekstowoAPILyrics</a></dt>
 <dd></dd>
 <dt><a href="#TekstowoAPI">TekstowoAPI</a></dt>
@@ -83,6 +85,23 @@
 | artists | <code>Object.&lt;string, TekstowoAPIArtistID&gt;</code> | 
 | pageCount | <code>number</code> | 
 
+<a name="TekstowoAPIArtistProfile"></a>
+
+## TekstowoAPIArtistProfile
+**Kind**: global class  
+<a name="new_TekstowoAPIArtistProfile_new"></a>
+
+### new TekstowoAPIArtistProfile(displayName, artistDescription, images, discography, comments, internalId)
+
+| Param | Type |
+| --- | --- |
+| displayName | <code>string</code> | 
+| artistDescription | <code>string</code> | 
+| images | <code>Array.&lt;{hd: string, small: string}&gt;</code> | 
+| discography | <code>Array.&lt;{year: number, name: string}&gt;</code> | 
+| comments | <code>number</code> \| <code>undefined</code> | 
+| internalId | <code>string</code> \| <code>undefined</code> | 
+
 <a name="TekstowoAPILyrics"></a>
 
 ## TekstowoAPILyrics
@@ -121,6 +140,7 @@
     * [.getLyrics(artist, songName)](#TekstowoAPI+getLyrics) ⇒ <code>Promise.&lt;(TekstowoAPILyrics\|null)&gt;</code>
     * [.getMetadata(songIdOrHtml, useHTML)](#TekstowoAPI+getMetadata) ⇒ <code>Promise.&lt;(TekstowoAPILyricsMetadata\|null)&gt;</code>
     * [.getArtistsSongList(artistId, options)](#TekstowoAPI+getArtistsSongList) ⇒ <code>Promise.&lt;{pageCount: number, results: Array.&lt;KVPair.&lt;string, TekstowoAPIArtistID&gt;&gt;}&gt;</code>
+    * [.requestComments(internalId, offset, mode)](#TekstowoAPI+requestComments)
 
 <a name="new_TekstowoAPI_new"></a>
 
@@ -268,6 +288,17 @@ Downloads and parses artist song list
 | options.page | <code>number</code> | 
 | options.sortDir | <code>string</code> | 
 | options.sortMode | <code>string</code> | 
+
+<a name="TekstowoAPI+requestComments"></a>
+
+### tekstowoAPI.requestComments(internalId, offset, mode)
+**Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| internalId | <code>string</code> |  | The post id we are pulling comments for. Can be song id, artist id. |
+| offset | <code>\*</code> | <code>0</code> | How many comments have we already acknowledged? |
+| mode | <code>\*</code> | <code>S</code> | What type is the post? 'S' for songs, 'A' for artists. |
 
 <a name="KVPair"></a>
 

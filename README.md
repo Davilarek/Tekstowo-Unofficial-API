@@ -10,7 +10,7 @@ This API has been designed for both Node.JS and Browserside JS.
 - [x] Comments
 - [ ] Popular songs list
 - [ ] Popular artists list
-- [ ] Artist details
+- [X] Artist details
 - [ ] Missing translations list
 - [ ] Missing lyrics list
 - [ ] Translation edit history
