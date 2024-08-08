@@ -369,6 +369,8 @@ class TekstowoAPI {
 	 * @returns {Promise<Object.<string, TekstowoAPILyricsID | TekstowoAPIArtistID> | TekstowoAPISearchResults>}
 	 */
 	async search(query = "", options, legacyOptions) {
+		throw new Error("Search functionality is no more.");
+		// eslint-disable-next-line no-unreachable
 		if (typeof options == "string") {
 			const old_ = options;
 			options = legacyOptions;
@@ -411,6 +413,7 @@ class TekstowoAPI {
 				Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: returnVal.pageCount, enumerable: false });
 			return base2;
 		};
+		// eslint-disable-next-line no-unreachable
 		const extractArtistsList = async () => {
 			/**
 			 * @type {Object.<string, TekstowoAPIArtistID>}
@@ -427,6 +430,7 @@ class TekstowoAPI {
 				Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: returnVal.pageCount, enumerable: false });
 			return base2;
 		};
+		// eslint-disable-next-line no-unreachable
 		if (onlySongs === true)
 			return await extractSongsList();
 		else if (onlyArtists === true)
