@@ -4,7 +4,7 @@ This API has been designed for both Node.JS and Browserside JS.
 
 ## Features:
 - [x] Getting the lyrics
-- ~~[x] Search~~ Killed by Tekstowo at around August
+- [x] Search
 - [x] Grabbing song metadata
 - [x] Artist's song list
 - [x] Comments
@@ -18,6 +18,7 @@ This API has been designed for both Node.JS and Browserside JS.
 
 ## Not planned:
 - User-related functionality (voting, login, submit lyrics, edit meta)
+- Advanced (google-based) search
 
 ## Installing
 Note: this project uses [pnpm](https://pnpm.io/) and you should use it too. <br>
