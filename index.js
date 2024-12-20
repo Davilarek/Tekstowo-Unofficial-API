@@ -317,7 +317,12 @@ class TekstowoAPI {
 				? new URL("http://localhost/?videoId=" + responseText.split("//www.youtube.com/embed/")[1].split("\"")[0]).searchParams.get("videoId")
 				: null;
 		};
-		const videoId = withVideoId === true ? (findVideoId() ?? findVideoId2()) : null;
+		const findVideoId3 = () => {
+			return responseText.includes(`class="youtube-player"`)
+				? new URL("http://localhost/?videoId=" + responseText.split(`class="youtube-player" data-id="`)[1].split("\"")[0]).searchParams.get("videoId")
+				: null;
+		};
+		const videoId = withVideoId === true ? (findVideoId() ?? (findVideoId2() ?? findVideoId3())) : null;
 		const internalId = responseText.split("ajxRankSong('Up',")[1].split(")")[0];
 		const commentCount = responseText.includes("Komentarze (") ? responseText.split("Komentarze (")[1].split("):")[0] : undefined;
 		return new TekstowoAPILyrics(lyricsNormal, lyricsTranslated, metaData, parsedName, videoId, internalId, aiGeneratedTranslation, commentCount);
