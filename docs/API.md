@@ -202,7 +202,7 @@ Downloads and parses lyrics page for specified arguments.
 <a name="TekstowoAPI+searchLyrics"></a>
 
 ### ~~tekstowoAPI.searchLyrics(artist, songName, page, includePageCount) ⇒ <code>Promise.&lt;Object.&lt;string, TekstowoAPILyricsID&gt;&gt;</code>~~
-***Deprecated***
+***Use `search` instead.***
 
 Downloads and parses search result page for specified arguments.
 
@@ -234,7 +234,7 @@ Downloads and parses search result page for specified arguments.
 <a name="TekstowoAPI+getPagesForSong"></a>
 
 ### ~~tekstowoAPI.getPagesForSong()~~
-***Deprecated***
+***Use getPagesForQuery***
 
 **Kind**: instance method of [<code>TekstowoAPI</code>](#TekstowoAPI)  
 <a name="TekstowoAPI+getPagesForQuery"></a>

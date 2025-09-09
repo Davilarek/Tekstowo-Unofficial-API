@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "jsdoc-to-markdown": "^8.0.1",
-    "browserify": "^17.0.0"
+    "jsdoc-to-markdown": "^9.1.2",
+    "browserify": "^17.0.1"
   }
 }
