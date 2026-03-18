@@ -3,7 +3,7 @@ name: Auto-build for browser
 on:
   push:
     branches:
-      - master
+      - v2
 
 permissions:
   contents: write
