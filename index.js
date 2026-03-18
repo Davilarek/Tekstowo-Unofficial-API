@@ -128,32 +128,49 @@ const ConstantURLPaths = {
 	artistProfile: "wykonawca",
 };
 
+const HOST = `https://www.tekstowo.pl/`;
+
 const TekstowoAPIUrls = {
 	/**
 	 * @param {TekstowoAPILyricsID} id
 	 */
-	LYRICS: (id) => { return `https://www.tekstowo.pl/${ConstantURLPaths.song},${id}.html`; },
-	SEARCH: (query, page = 1) => {
-		let baseUrl = `https://www.tekstowo.pl/${ConstantURLPaths.search},`;
-		baseUrl += query + ",";
-		baseUrl += "strona," + page;
-		return baseUrl + ".html";
+	LYRICS: (id) => { return `${HOST}${ConstantURLPaths.song},${id}.html`; },
+	/**
+	 * @param {TekstowoAPILyricsID} id
+	 */
+	LYRICS_MODERN: (id) => { return `${HOST}${id}`; },
+	SEARCH: (query) => {
+		let baseUrl = `${HOST}${ConstantURLPaths.search}?search-query=`;
+		baseUrl += query;
+		return baseUrl;
 	},
 	/**
 	 * @param {TekstowoAPIArtistID} id
 	 */
 	ARTIST_SONGS: (id, sortMode = SortMode.alphabetically, sortDir = (AutomaticSortDirection(sortMode)), page = 1) => {
-		return `https://www.tekstowo.pl/${ConstantURLPaths.artistSongs},${id},${sortMode},${sortDir},strona,${page}.html`;
+		return `${HOST}${ConstantURLPaths.artistSongs},${id},${sortMode},${sortDir},strona,${page}.html`;
+	},
+	/**
+	 * @param {TekstowoAPIArtistID} id
+	 */
+	ARTIST_SONGS_MODERN: (id, sortMode = SortMode.alphabetically, sortDir = (AutomaticSortDirection(sortMode)), page = 1) => {
+		return `${HOST}${id}?sort=${sortMode}&order=${sortDir}&strona=${page}`;
 	},
 	/**
 	 * @param {TekstowoAPIArtistID} id
 	 */
 	ARTIST_PROFILE: (id) => {
-		return `https://www.tekstowo.pl/${ConstantURLPaths.artistProfile},${id}.html`;
+		return `${HOST}${ConstantURLPaths.artistProfile},${id}.html`;
+	},
+	/**
+	 * @param {TekstowoAPIArtistID} id
+	 */
+	ARTIST_PROFILE_MODERN: (id) => {
+		return `${HOST}${ConstantURLPaths.artistProfile}/${id}`;
 	},
 	__TEKSTOWO_OFFICIAL_API_USE_RARELY: {
 		MORE_COMMENTS: (internalId, offset = 0, mode = 'S') => {
-			return `https://www.tekstowo.pl/js,moreComments,${mode},${internalId},${offset}`;
+			return `${HOST}js,moreComments,${mode},${internalId},${offset}`;
 		},
 	},
 };
@@ -186,6 +203,10 @@ class TekstowoAPILyrics {
 		this.commentCount = commentCount;
 	}
 }
+
+const SPLIT_MAPPING = {
+	card_divider: "card-body p-0",
+};
 
 /**
  * just an Object
@@ -260,7 +281,7 @@ class TekstowoAPI {
 	async extractLyrics(songId, options = {}) {
 		const { withMetadata, withVideoId } = (typeof options == 'boolean' ? { withMetadata: options } : options);
 		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.LYRICS(songId)), { method: "GET" },
+			this.proxyThisUrl(songId.includes("/") ? TekstowoAPIUrls.LYRICS_MODERN(songId) : TekstowoAPIUrls.LYRICS(songId)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
@@ -391,54 +412,66 @@ class TekstowoAPI {
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
+		// debugger;
 		// const baseForScrapping = responseText.split(`:</h2>`)[1].split(`<h2 class="`)[0];
 		const baseForScrapping = responseText.split(`:</h2>`);
 		// const songsNum = 1;
-		const rawSongs = baseForScrapping[1].split("`<h2 class=")[0].replace(/\n/g, "").replace(/ {4,}/g, ' ');
-		const rawArtists = baseForScrapping.length <= 2 ? "" : baseForScrapping[2].split(`<nav`)[0].replace(/\n/g, "").replace(/ {4,}/g, ' ');
+		const rawSongs = baseForScrapping[1].split(SPLIT_MAPPING.card_divider)[1].trim();
+		const rawArtists = baseForScrapping.length > 2 ? baseForScrapping[2].split(SPLIT_MAPPING.card_divider)[1].trim() : [];
 		const returnVal = new TekstowoAPISearchResults();
 		if (includePageCount === true)
 			returnVal.pageCount = await this.getPagesForQuery(query, responseText);
 		// debugger;
-		const extractSongsList = async () => {
+		const extractList = async (what) => {
 			/**
 			 * @type {Object.<string, TekstowoAPILyricsID>}
 			 */
 			const base2 = {};
-			const splitTarget = `<a href="/${ConstantURLPaths.song},`;
-			const extractedIds = getTextBetween(rawSongs, splitTarget, `.html" class="`);
+			const splitTarget = `<a href="/`;
+			const extractedIds = getTextBetween(what, splitTarget, `class="title"`).map(x => x.trimEnd().split("").filter((x, i, t) => i != t.length - 1).join(""));
 			for (let i = 0; i < extractedIds.length; i++) {
 				const element = extractedIds[i];
-				const name = rawSongs.split(splitTarget + element + `.html" class="title" title="`)[1].split(`">`)[0];
+				// const name = rawSongs.split(splitTarget + element + `" class="title" title="`)[1].split(`">`)[0];
+				// base2[name] = element;
+				const name = (() => {
+					let work = splitTarget + element + "\"";
+					// let workspace = rawSongs.split(work);
+					let workspace2 = what.split(work)[1];
+					let targets = [`class="title"`, `title="`];
+					let attempt = null;
+					// let iter = 1;
+					let targetIter = 0;
+					let target = targets[targetIter];
+					while (targetIter != targets.length) {
+						let oldWork = work;
+						// work = workspace[iter].trim();
+						work = workspace2.trim();
+						if (work.startsWith(target)) {
+							attempt = work.split(target)[1];
+							// iter = 1;
+							// workspace = workspace[iter].substring(workspace[iter].indexOf(target) + target.length);
+							workspace2 = workspace2.substring(workspace2.indexOf(target) + target.length);
+							targetIter++;
+							target = targets[targetIter];
+						}
+						else {
+							work = oldWork;
+							// iter++;
+						}
+					}
+					return attempt;
+				})().split(`">`)[0];
 				base2[name] = element;
 			}
-			if (includePageCount === true && onlySongs === true)
-				Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: returnVal.pageCount, enumerable: false });
-			return base2;
-		};
-		const extractArtistsList = async () => {
-			/**
-			 * @type {Object.<string, TekstowoAPIArtistID>}
-			 */
-			const base2 = {};
-			const splitTarget = `<a href="/${ConstantURLPaths.artistSongs},`;
-			const extractedIds = getTextBetween(rawArtists, splitTarget, `.html" class="`);
-			for (let i = 0; i < extractedIds.length; i++) {
-				const element = extractedIds[i];
-				const name = rawArtists.split(splitTarget + element + `.html" class="title" title="`)[1].split(`">`)[0];
-				base2[name] = element;
-			}
-			if (includePageCount === true && onlyArtists === true)
-				Object.defineProperty(base2, "INTERNAL_PAGE_COUNT", { value: returnVal.pageCount, enumerable: false });
 			return base2;
 		};
 		if (onlySongs === true)
-			return await extractSongsList();
+			return await extractList(rawSongs);
 		else if (onlyArtists === true)
-			return await extractArtistsList();
+			return await extractList(rawArtists);
 		else {
-			returnVal.songs = await extractSongsList();
-			returnVal.artists = await extractArtistsList();
+			returnVal.songs = await extractList(rawSongs);
+			returnVal.artists = await extractList(rawArtists);
 			return returnVal;
 		}
 	}
@@ -465,15 +498,15 @@ class TekstowoAPI {
 			skipFetch = unescapeJsonString(await response.text());
 		}
 		const responseText = skipFetch.split("\n").join("");
-		const base1 = getTextBetween(responseText, `<li class="page-item"><a class="page-link" href="`, `.html" `);
+		const base1 = getTextBetween(responseText, `<li class="page-item"><a  class="page-link" href="`, `" `);
 		const last = base1[base1.length - 1];
 		if (!last)
 			return 1;
 		// const duplicates = getDuplicates(base1);
 		// const lastNum = last.split(",strona,").length > 1 ? last.split(",strona,")[1] : 1;
-		const lastNum = last.split(",strona,")[1];
-		const base2 = getTextBetween(responseText, `<a class="page-link" href="`, `</a>`);
-		const tested = base2[base2.length - 1].includes(`&gt;&gt;`) ? base2[base2.length - 1].split("strona,")[1].split(".html")[0] : null;
+		const lastNum = last.split("strona=")[1];
+		const base2 = getTextBetween(responseText, `<a  class="page-link" href="`, `</a>`);
+		const tested = base2[base2.length - 1].includes(`&gt;&gt;`) ? base2[base2.length - 1].split("strona=")[1].split("\"")[0] : null;
 		// const filtered = base2.filter(x => x.includes(`&lt;&lt;`) || x.includes(`&gt;&gt;`));
 		const final = parseInt(lastNum);
 		if (tested == null && base2[0].includes(`&lt;&lt;`))
@@ -558,7 +591,7 @@ class TekstowoAPI {
 	async getArtistsSongList(artistId, options = {}) {
 		const { sortMode, sortDir, page } = options;
 		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.ARTIST_SONGS(artistId, sortMode, sortDir, page)), { method: "GET" },
+			this.proxyThisUrl(TekstowoAPIUrls.ARTIST_SONGS_MODERN(artistId, sortMode, sortDir, page)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
@@ -568,11 +601,12 @@ class TekstowoAPI {
 		 * @type {Array<KVPair<string, TekstowoAPIArtistID>>}
 		 */
 		const base2 = [];
-		const splitTarget = `<a href="/${ConstantURLPaths.song},`;
-		const extractedIds = getTextBetween(base, splitTarget, `.html" class="`);
+		// const splitTarget = `<a href="/${ConstantURLPaths.song},`;
+		const splitTarget = `<a href="/`;
+		const extractedIds = getTextBetween(base, splitTarget, `" class="`);
 		for (let i = 0; i < extractedIds.length; i++) {
 			const element = extractedIds[i];
-			const name = base.split(splitTarget + element + `.html" class="title"title="`)[1].split(`">`)[0];
+			const name = base.split(splitTarget + element + `" class="title"title="`)[1].split(`">`)[0];
 			base2.push(new KVPair(name, element));
 		}
 		// debugger;
@@ -593,7 +627,7 @@ class TekstowoAPI {
 	}
 	async getArtistProfile(artistId) {
 		const requestOptions = new TekstowoAPIRequestOptions(
-			this.proxyThisUrl(TekstowoAPIUrls.ARTIST_PROFILE(artistId)), { method: "GET" },
+			this.proxyThisUrl(TekstowoAPIUrls.ARTIST_PROFILE_MODERN(artistId)), { method: "GET" },
 		);
 		const response = await this.makeRequest(requestOptions);
 		const responseText = unescapeJsonString(await response.text());
@@ -890,4 +924,4 @@ function getTextBetween(text, start, end) {
 	return results;
 }
 
-module.exports = TekstowoAPI;
+export default TekstowoAPI;

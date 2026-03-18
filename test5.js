@@ -1,4 +1,4 @@
-const TekstowoAPI = require("./index");
+import TekstowoAPI from "./index.js";
 const TekstowoAPIInstance = new TekstowoAPI(fetch, 0);
 (async () => {
     const lyricsData = await TekstowoAPIInstance.extractLyrics("arctic_monkeys,do_i_wanna_know");

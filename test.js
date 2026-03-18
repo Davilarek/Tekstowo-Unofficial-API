@@ -1,5 +1,5 @@
 /* eslint-disable no-inline-comments */
-const TekstowoAPI = require("./index");
+import TekstowoAPI from "./index.js";
 const TekstowoAPIInstance = new TekstowoAPI(fetch, 0);
 (async () => {
     const lyricsExtracted = await TekstowoAPIInstance.extractLyrics(`frontside,dopoki_moje_serce_bije`); // ok
